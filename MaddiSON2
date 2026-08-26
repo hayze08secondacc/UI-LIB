@@ -1,823 +1,256 @@
---[[
-    RicharliSON UI Library
-    A beautiful, modern UI library for Roblox
---]]
+local Library = {}
 
-local RicharliSON = {}
 local TweenService = game:GetService("TweenService")
-local Players = game:GetService("Players")
-local Debris = game:GetService("Debris")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 
--- ═══════════════════════════════════════════════════════
--- CONFIGURATION & THÈMES
--- ═══════════════════════════════════════════════════════
-
-RicharliSON.Themes = {
-    Default = {
-        Primary = Color3.fromRGB(100, 80, 255),
-        Secondary = Color3.fromRGB(255, 80, 180),
-        Accent = Color3.fromRGB(80, 200, 255),
-        Background = Color3.fromRGB(25, 25, 35),
-        Surface = Color3.fromRGB(35, 35, 50),
-        Text = Color3.fromRGB(255, 255, 255),
-        TextDim = Color3.fromRGB(180, 180, 200),
-        Success = Color3.fromRGB(80, 220, 120),
-        Warning = Color3.fromRGB(255, 180, 50),
-        Error = Color3.fromRGB(255, 80, 80),
-        Shadow = Color3.fromRGB(0, 0, 0)
-    },
-    Dark = {
-        Primary = Color3.fromRGB(80, 120, 255),
-        Secondary = Color3.fromRGB(255, 100, 100),
-        Accent = Color3.fromRGB(100, 255, 180),
-        Background = Color3.fromRGB(15, 15, 20),
-        Surface = Color3.fromRGB(25, 25, 35),
-        Text = Color3.fromRGB(240, 240, 240),
-        TextDim = Color3.fromRGB(150, 150, 170),
-        Success = Color3.fromRGB(60, 200, 100),
-        Warning = Color3.fromRGB(255, 160, 40),
-        Error = Color3.fromRGB(220, 60, 60),
-        Shadow = Color3.fromRGB(0, 0, 0)
-    },
-    Neon = {
-        Primary = Color3.fromRGB(0, 255, 200),
-        Secondary = Color3.fromRGB(255, 0, 150),
-        Accent = Color3.fromRGB(150, 0, 255),
-        Background = Color3.fromRGB(10, 10, 20),
-        Surface = Color3.fromRGB(20, 20, 35),
-        Text = Color3.fromRGB(220, 255, 255),
-        TextDim = Color3.fromRGB(120, 180, 200),
-        Success = Color3.fromRGB(0, 255, 150),
-        Warning = Color3.fromRGB(255, 200, 0),
-        Error = Color3.fromRGB(255, 50, 100),
-        Shadow = Color3.fromRGB(0, 0, 0)
-    }
+-- Color Palette
+local Colors = {
+	Background = Color3.fromRGB(15, 15, 20),
+	Element = Color3.fromRGB(25, 25, 30),
+	Hover = Color3.fromRGB(35, 35, 45),
+	Accent = Color3.fromRGB(130, 90, 255),
+	Text = Color3.fromRGB(255, 255, 255),
+	SubText = Color3.fromRGB(180, 180, 180)
 }
 
-local CurrentTheme = RicharliSON.Themes.Default
-
--- ═══════════════════════════════════════════════════════
--- UTILITAIRES
--- ═══════════════════════════════════════════════════════
-
-function RicharliSON:SetTheme(themeName)
-    CurrentTheme = self.Themes[themeName] or self.Themes.Default
+-- Utility: Smooth Animations
+local function Tween(instance, properties, duration)
+	local tween = TweenService:Create(instance, TweenInfo.new(duration or 0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), properties)
+	tween:Play()
+	return tween
 end
 
-function RicharliSON:GetTheme()
-    return CurrentTheme
+function Library:CreateWindow(titleText)
+	local Window = {}
+	
+	-- Main GUI
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = "NeonUI"
+	ScreenGui.ResetOnSpawn = false
+	
+	-- Bypass for exploit execution, fallback to PlayerGui for Studio
+	if gethui then
+		ScreenGui.Parent = gethui()
+	elseif game:GetService("RunService"):IsStudio() then
+		ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	else
+		ScreenGui.Parent = CoreGui
+	end
+
+	-- Main Frame
+	local MainFrame = Instance.new("Frame")
+	MainFrame.Size = UDim2.new(0, 450, 0, 300)
+	MainFrame.Position = UDim2.new(0.5, -225, 0.5, -150)
+	MainFrame.BackgroundColor3 = Colors.Background
+	MainFrame.BorderSizePixel = 0
+	MainFrame.ClipsDescendants = true
+	MainFrame.Parent = ScreenGui
+
+	-- Styling: Corner, Stroke, Shadow
+	Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+	local MainStroke = Instance.new("UIStroke", MainFrame)
+	MainStroke.Color = Colors.Accent
+	MainStroke.Thickness = 1.5
+	MainStroke.Transparency = 0.3
+
+	-- Animated Background Gradient
+	local BGGradient = Instance.new("UIGradient", MainFrame)
+	BGGradient.Color = ColorSequence.new{
+		ColorSequenceKeypoint.new(0, Colors.Background),
+		ColorSequenceKeypoint.new(0.5, Color3.fromRGB(25, 20, 35)),
+		ColorSequenceKeypoint.new(1, Colors.Background)
+	}
+	BGGradient.Rotation = 45
+	
+	-- Animate the Gradient
+	local rotationVal = 0
+	RunService.RenderStepped:Connect(function(dt)
+		rotationVal = (rotationVal + (dt * 15)) % 360
+		BGGradient.Rotation = rotationVal
+	end)
+
+	-- Title
+	local Title = Instance.new("TextLabel")
+	Title.Size = UDim2.new(1, -20, 0, 40)
+	Title.Position = UDim2.new(0, 10, 0, 0)
+	Title.BackgroundTransparency = 1
+	Title.Text = titleText
+	Title.TextColor3 = Colors.Text
+	Title.TextSize = 18
+	Title.Font = Enum.Font.GothamBold
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.Parent = MainFrame
+
+	-- Container for elements
+	local Container = Instance.new("ScrollingFrame")
+	Container.Size = UDim2.new(1, -20, 1, -50)
+	Container.Position = UDim2.new(0, 10, 0, 40)
+	Container.BackgroundTransparency = 1
+	Container.ScrollBarThickness = 2
+	Container.ScrollBarImageColor3 = Colors.Accent
+	Container.Parent = MainFrame
+
+	local UIListLayout = Instance.new("UIListLayout", Container)
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout.Padding = UDim.new(0, 8)
+
+	-- Make Window Draggable
+	local dragging, dragInput, dragStart, startPos
+	Title.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = MainFrame.Position
+		end
+	end)
+	Title.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = false
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if dragging then
+				local delta = input.Position - dragStart
+				MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			end
+		end
+	end)
+
+	-- Element Creation Functions
+	function Window:CreateButton(text, callback)
+		local Button = Instance.new("TextButton")
+		Button.Size = UDim2.new(1, 0, 0, 35)
+		Button.BackgroundColor3 = Colors.Element
+		Button.Text = text
+		Button.TextColor3 = Colors.Text
+		Button.Font = Enum.Font.GothamSemibold
+		Button.TextSize = 14
+		Button.AutoButtonColor = false
+		Button.Parent = Container
+
+		Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 6)
+		local BtnStroke = Instance.new("UIStroke", Button)
+		BtnStroke.Color = Colors.Accent
+		BtnStroke.Transparency = 1 -- Hidden by default
+
+		Button.MouseEnter:Connect(function()
+			Tween(Button, {BackgroundColor3 = Colors.Hover})
+			Tween(BtnStroke, {Transparency = 0.5})
+		end)
+
+		Button.MouseLeave:Connect(function()
+			Tween(Button, {BackgroundColor3 = Colors.Element})
+			Tween(BtnStroke, {Transparency = 1})
+		end)
+
+		Button.MouseButton1Click:Connect(function()
+			-- Click Pop Effect
+			Tween(Button, {Size = UDim2.new(0.95, 0, 0, 31)}, 0.1).Completed:Wait()
+			Tween(Button, {Size = UDim2.new(1, 0, 0, 35)}, 0.1)
+			callback()
+		end)
+	end
+
+	function Window:CreateToggle(text, callback)
+		local toggled = false
+
+		local ToggleBtn = Instance.new("TextButton")
+		ToggleBtn.Size = UDim2.new(1, 0, 0, 35)
+		ToggleBtn.BackgroundColor3 = Colors.Element
+		ToggleBtn.Text = "  " .. text
+		ToggleBtn.TextColor3 = Colors.Text
+		ToggleBtn.Font = Enum.Font.GothamSemibold
+		ToggleBtn.TextSize = 14
+		ToggleBtn.TextXAlignment = Enum.TextXAlignment.Left
+		ToggleBtn.AutoButtonColor = false
+		ToggleBtn.Parent = Container
+
+		Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(0, 6)
+
+		local IndicatorOuter = Instance.new("Frame", ToggleBtn)
+		IndicatorOuter.Size = UDim2.new(0, 40, 0, 20)
+		IndicatorOuter.Position = UDim2.new(1, -50, 0.5, -10)
+		IndicatorOuter.BackgroundColor3 = Colors.Background
+		Instance.new("UICorner", IndicatorOuter).CornerRadius = UDim.new(1, 0)
+		local IndStroke = Instance.new("UIStroke", IndicatorOuter)
+		IndStroke.Color = Colors.SubText
+		IndStroke.Thickness = 1
+
+		local IndicatorInner = Instance.new("Frame", IndicatorOuter)
+		IndicatorInner.Size = UDim2.new(0, 16, 0, 16)
+		IndicatorInner.Position = UDim2.new(0, 2, 0.5, -8)
+		IndicatorInner.BackgroundColor3 = Colors.SubText
+		Instance.new("UICorner", IndicatorInner).CornerRadius = UDim.new(1, 0)
+
+		ToggleBtn.MouseButton1Click:Connect(function()
+			toggled = not toggled
+			if toggled then
+				Tween(IndicatorInner, {Position = UDim2.new(1, -18, 0.5, -8), BackgroundColor3 = Colors.Accent})
+				Tween(IndStroke, {Color = Colors.Accent})
+			else
+				Tween(IndicatorInner, {Position = UDim2.new(0, 2, 0.5, -8), BackgroundColor3 = Colors.SubText})
+				Tween(IndStroke, {Color = Colors.SubText})
+			end
+			callback(toggled)
+		end)
+	end
+
+	function Window:CreateKeybind(text, defaultKey, callback)
+		local currentKey = defaultKey
+		local isListening = false
+
+		local KeybindFrame = Instance.new("Frame")
+		KeybindFrame.Size = UDim2.new(1, 0, 0, 35)
+		KeybindFrame.BackgroundColor3 = Colors.Element
+		KeybindFrame.Parent = Container
+		Instance.new("UICorner", KeybindFrame).CornerRadius = UDim.new(0, 6)
+
+		local Label = Instance.new("TextLabel", KeybindFrame)
+		Label.Size = UDim2.new(1, -100, 1, 0)
+		Label.Position = UDim2.new(0, 10, 0, 0)
+		Label.BackgroundTransparency = 1
+		Label.Text = text
+		Label.TextColor3 = Colors.Text
+		Label.Font = Enum.Font.GothamSemibold
+		Label.TextSize = 14
+		Label.TextXAlignment = Enum.TextXAlignment.Left
+
+		local BindBtn = Instance.new("TextButton", KeybindFrame)
+		BindBtn.Size = UDim2.new(0, 80, 0, 25)
+		BindBtn.Position = UDim2.new(1, -90, 0.5, -12.5)
+		BindBtn.BackgroundColor3 = Colors.Background
+		BindBtn.Text = currentKey.Name
+		BindBtn.TextColor3 = Colors.Accent
+		BindBtn.Font = Enum.Font.GothamBold
+		BindBtn.TextSize = 12
+		Instance.new("UICorner", BindBtn).CornerRadius = UDim.new(0, 4)
+		Instance.new("UIStroke", BindBtn).Color = Colors.Accent
+
+		BindBtn.MouseButton1Click:Connect(function()
+			isListening = true
+			BindBtn.Text = "..."
+			Tween(BindBtn, {BackgroundColor3 = Colors.Hover})
+		end)
+
+		UserInputService.InputBegan:Connect(function(input)
+			if isListening and input.UserInputType == Enum.UserInputType.Keyboard then
+				local key = input.KeyCode
+				if key ~= Enum.KeyCode.Unknown then
+					currentKey = key
+					BindBtn.Text = currentKey.Name
+					isListening = false
+					Tween(BindBtn, {BackgroundColor3 = Colors.Background})
+				end
+			elseif not isListening and input.KeyCode == currentKey then
+				callback()
+			end
+		end)
+	end
+
+	return Window
 end
 
-function RicharliSON:Tween(obj, properties, duration, style, direction, callback)
-    local info = TweenInfo.new(
-        duration or 0.4,
-        style or Enum.EasingStyle.Quart,
-        direction or Enum.EasingDirection.Out
-    )
-    local tween = TweenService:Create(obj, info, properties)
-    if callback then
-        tween.Completed:Connect(callback)
-    end
-    tween:Play()
-    return tween
-end
-
-function RicharliSON:CreateCorner(parent, radius)
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = radius or UDim.new(0, 12)
-    corner.Parent = parent
-    return corner
-end
-
-function RicharliSON:CreateStroke(parent, color, thickness, transparency)
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = color or CurrentTheme.Primary
-    stroke.Thickness = thickness or 1
-    stroke.Transparency = transparency or 0.8
-    stroke.Parent = parent
-    return stroke
-end
-
-function RicharliSON:CreateGradient(parent, colors, rotation)
-    local gradient = Instance.new("UIGradient")
-    gradient.Rotation = rotation or 0
-    if type(colors) == "table" then
-        local keypoints = {}
-        for i, color in ipairs(colors) do
-            table.insert(keypoints, ColorSequenceKeypoint.new((i-1)/(#colors-1), color))
-        end
-        gradient.Color = ColorSequence.new(keypoints)
-    end
-    gradient.Parent = parent
-    return gradient
-end
-
-function RicharliSON:CreateShadow(parent, offset, transparency)
-    local shadow = Instance.new("Frame")
-    shadow.Name = "Shadow"
-    shadow.Size = UDim2.new(1, (offset or 8) * 2, 1, (offset or 8) * 2)
-    shadow.Position = UDim2.new(0, -offset or -8, 0, -offset or -8)
-    shadow.BackgroundColor3 = CurrentTheme.Shadow
-    shadow.BackgroundTransparency = transparency or 0.7
-    shadow.BorderSizePixel = 0
-    shadow.ZIndex = parent.ZIndex - 1
-    shadow.Parent = parent.Parent
-    
-    self:CreateCorner(shadow, UDim.new(0, 14))
-    
-    -- Animation d'entrée
-    shadow.Size = UDim2.new(0, 0, 0, 0)
-    shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
-    
-    self:Tween(shadow, {
-        Size = UDim2.new(1, (offset or 8) * 2, 1, (offset or 8) * 2),
-        Position = UDim2.new(0, -offset or -8, 0, -offset or -8)
-    }, 0.6, Enum.EasingStyle.Back)
-    
-    return shadow
-end
-
-function RicharliSON:RippleEffect(button, inputPosition)
-    local ripple = Instance.new("Frame")
-    ripple.Name = "Ripple"
-    ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    ripple.BackgroundTransparency = 0.8
-    ripple.BorderSizePixel = 0
-    ripple.ZIndex = button.ZIndex + 10
-    ripple.Parent = button
-    
-    local size = math.max(button.AbsoluteSize.X, button.AbsoluteSize.Y) * 1.5
-    ripple.Size = UDim2.new(0, 0, 0, 0)
-    
-    local pos = inputPosition or button.AbsolutePosition + (button.AbsoluteSize / 2)
-    local relPos = pos - button.AbsolutePosition
-    ripple.Position = UDim2.new(0, relPos.X, 0, relPos.Y)
-    
-    self:CreateCorner(ripple, UDim.new(1, 0))
-    
-    self:Tween(ripple, {
-        Size = UDim2.new(0, size, 0, size),
-        Position = UDim2.new(0, relPos.X - size/2, 0, relPos.Y - size/2),
-        BackgroundTransparency = 1
-    }, 0.6, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, function()
-        ripple:Destroy()
-    end)
-end
-
--- ═══════════════════════════════════════════════════════
--- FENÊTRE PRINCIPALE
--- ═══════════════════════════════════════════════════════
-
-function RicharliSON:CreateWindow(config)
-    config = config or {}
-    local title = config.Title or "RicharliSON"
-    local size = config.Size or UDim2.new(0, 550, 0, 380)
-    local pos = config.Position or UDim2.new(0.5, -275, 0.5, -190)
-    local theme = config.Theme or "Default"
-    
-    self:SetTheme(theme)
-    
-    local player = Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
-    
-    -- ScreenGui
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = title .. "_UI"
-    screenGui.ResetOnSpawn = false
-    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    screenGui.Parent = playerGui
-    
-    -- Frame principal
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Name = "MainFrame"
-    mainFrame.Size = size
-    mainFrame.Position = pos
-    mainFrame.BackgroundColor3 = CurrentTheme.Background
-    mainFrame.BorderSizePixel = 0
-    mainFrame.ClipsDescendants = true
-    mainFrame.ZIndex = 10
-    mainFrame.Parent = screenGui
-    
-    self:CreateCorner(mainFrame, UDim.new(0, 16))
-    
-    -- Ombre
-    local shadow = self:CreateShadow(mainFrame, 10, 0.65)
-    
-    -- Bordure glow animée
-    local glowBorder = Instance.new("Frame")
-    glowBorder.Name = "GlowBorder"
-    glowBorder.Size = UDim2.new(1, 6, 1, 6)
-    glowBorder.Position = UDim2.new(0, -3, 0, -3)
-    glowBorder.BackgroundColor3 = CurrentTheme.Primary
-    glowBorder.BorderSizePixel = 0
-    glowBorder.ZIndex = 9
-    glowBorder.Parent = mainFrame
-    self:CreateCorner(glowBorder, UDim.new(0, 18))
-    
-    local glowGradient = self:CreateGradient(glowBorder, {
-        CurrentTheme.Primary,
-        CurrentTheme.Secondary,
-        CurrentTheme.Accent,
-        CurrentTheme.Primary
-    }, 0)
-    
-    -- Animation rotation glow
-    spawn(function()
-        while glowGradient.Parent do
-            for i = 0, 360, 2 do
-                if not glowGradient.Parent then break end
-                glowGradient.Rotation = i
-                task.wait(0.016)
-            end
-        end
-    end)
-    
-    -- Dégradé de fond
-    self:CreateGradient(mainFrame, {
-        CurrentTheme.Background,
-        Color3.fromRGB(
-            CurrentTheme.Background.R * 255 + 10,
-            CurrentTheme.Background.G * 255 + 5,
-            CurrentTheme.Background.B * 255 + 15
-        ),
-        CurrentTheme.Background
-    }, 45)
-    
-    -- Barre de titre
-    local titleBar = Instance.new("Frame")
-    titleBar.Name = "TitleBar"
-    titleBar.Size = UDim2.new(1, 0, 0, 55)
-    titleBar.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    titleBar.BackgroundTransparency = 0.95
-    titleBar.BorderSizePixel = 0
-    titleBar.ZIndex = 11
-    titleBar.Parent = mainFrame
-    self:CreateCorner(titleBar, UDim.new(0, 16))
-    
-    -- Titre avec dégradé
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Name = "Title"
-    titleLabel.Size = UDim2.new(0, 350, 1, 0)
-    titleLabel.Position = UDim2.new(0, 20, 0, 0)
-    titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = title
-    titleLabel.TextColor3 = CurrentTheme.Text
-    titleLabel.TextSize = 26
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.ZIndex = 12
-    titleLabel.Parent = titleBar
-    
-    self:CreateGradient(titleLabel, {CurrentTheme.Primary, CurrentTheme.Secondary}, 0)
-    
-    -- Boutons de contrôle
-    local controls = {"Close", "Minimize"}
-    local colors = {CurrentTheme.Error, CurrentTheme.Warning}
-    local symbols = {"×", "−"}
-    
-    for i, control in ipairs(controls) do
-        local btn = Instance.new("TextButton")
-        btn.Name = control .. "Btn"
-        btn.Size = UDim2.new(0, 32, 0, 32)
-        btn.Position = UDim2.new(1, -42 * i, 0, 11)
-        btn.BackgroundColor3 = colors[i]
-        btn.Text = symbols[i]
-        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        btn.TextSize = 20
-        btn.Font = Enum.Font.GothamBold
-        btn.ZIndex = 12
-        btn.Parent = titleBar
-        self:CreateCorner(btn, UDim.new(0, 8))
-        
-        -- Hover effects
-        btn.MouseEnter:Connect(function()
-            self:Tween(btn, {BackgroundTransparency = 0.3}, 0.2)
-        end)
-        btn.MouseLeave:Connect(function()
-            self:Tween(btn, {BackgroundTransparency = 0}, 0.2)
-        end)
-    end
-    
-    local closeBtn = titleBar:FindFirstChild("CloseBtn")
-    local minBtn = titleBar:FindFirstChild("MinimizeBtn")
-    
-    -- Contenu
-    local contentFrame = Instance.new("Frame")
-    contentFrame.Name = "Content"
-    contentFrame.Size = UDim2.new(1, -30, 1, -65)
-    contentFrame.Position = UDim2.new(0, 15, 0, 60)
-    contentFrame.BackgroundTransparency = 1
-    contentFrame.ZIndex = 11
-    contentFrame.Parent = mainFrame
-    
-    local contentLayout = Instance.new("UIListLayout")
-    contentLayout.Padding = UDim.new(0, 10)
-    contentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    contentLayout.VerticalAlignment = Enum.VerticalAlignment.Top
-    contentLayout.Parent = contentFrame
-    
-    -- Animation d'ouverture
-    mainFrame.Size = UDim2.new(0, 0, 0, 0)
-    mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-    self:Tween(mainFrame, {Size = size, Position = pos}, 0.8, Enum.EasingStyle.Back)
-    
-    -- Drag & Drop
-    local dragging = false
-    local dragStart, startPos
-    
-    titleBar.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = input.Position
-            startPos = mainFrame.Position
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - dragStart
-            local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-            mainFrame.Position = newPos
-            shadow.Position = UDim2.new(newPos.X.Scale, newPos.X.Offset - 10, newPos.Y.Scale, newPos.Y.Offset - 10)
-        end
-    end)
-    
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    
-    -- Fermer
-    closeBtn.MouseButton1Click:Connect(function()
-        self:Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        self:Tween(shadow, {Size = UDim2.new(0, 0, 0, 0)}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In, function()
-            screenGui:Destroy()
-        end)
-    end)
-    
-    -- Minimiser
-    local minimized = false
-    minBtn.MouseButton1Click:Connect(function()
-        minimized = not minimized
-        if minimized then
-            self:Tween(mainFrame, {Size = UDim2.new(0, size.X.Offset, 0, 55)}, 0.4)
-            self:Tween(shadow, {Size = UDim2.new(0, size.X.Offset + 20, 0, 65)}, 0.4)
-            contentFrame.Visible = false
-            minBtn.Text = "+"
-        else
-            self:Tween(mainFrame, {Size = size}, 0.4)
-            self:Tween(shadow, {Size = UDim2.new(0, size.X.Offset + 20, 0, size.Y.Offset + 20)}, 0.4)
-            contentFrame.Visible = true
-            minBtn.Text = "−"
-        end
-    end)
-    
-    local window = {
-        Frame = mainFrame,
-        Content = contentFrame,
-        ScreenGui = screenGui,
-        Theme = CurrentTheme
-    }
-    
-    return window
-end
-
--- ═══════════════════════════════════════════════════════
--- COMPOSANTS
--- ═══════════════════════════════════════════════════════
-
-function RicharliSON:CreateButton(parent, config)
-    config = config or {}
-    local text = config.Text or "Button"
-    local color = config.Color or CurrentTheme.Primary
-    local callback = config.Callback or function() end
-    local width = config.Width or 140
-    local height = config.Height or 40
-    
-    local btn = Instance.new("TextButton")
-    btn.Name = config.Name or "Button"
-    btn.Size = UDim2.new(0, width, 0, height)
-    btn.BackgroundColor3 = color
-    btn.Text = text
-    btn.TextColor3 = CurrentTheme.Text
-    btn.TextSize = 14
-    btn.Font = Enum.Font.GothamBold
-    btn.AutoButtonColor = false
-    btn.ZIndex = 12
-    btn.Parent = parent
-    
-    self:CreateCorner(btn, UDim.new(0, 10))
-    self:CreateStroke(btn, Color3.fromRGB(255, 255, 255), 1, 0.8)
-    
-    -- Hover & Click
-    btn.MouseEnter:Connect(function()
-        self:Tween(btn, {Size = UDim2.new(0, width + 5, 0, height + 2)}, 0.2)
-    end)
-    
-    btn.MouseLeave:Connect(function()
-        self:Tween(btn, {Size = UDim2.new(0, width, 0, height)}, 0.2)
-    end)
-    
-    btn.MouseButton1Down:Connect(function()
-        self:Tween(btn, {Size = UDim2.new(0, width - 3, 0, height - 2)}, 0.1)
-    end)
-    
-    btn.MouseButton1Up:Connect(function()
-        self:Tween(btn, {Size = UDim2.new(0, width + 5, 0, height + 2)}, 0.1)
-    end)
-    
-    btn.MouseButton1Click:Connect(function(x, y)
-        self:RippleEffect(btn, Vector2.new(x, y))
-        callback()
-    end)
-    
-    return btn
-end
-
-function RicharliSON:CreateLabel(parent, config)
-    config = config or {}
-    
-    local label = Instance.new("TextLabel")
-    label.Name = config.Name or "Label"
-    label.Size = config.Size or UDim2.new(1, 0, 0, 30)
-    label.BackgroundTransparency = 1
-    label.Text = config.Text or "Label"
-    label.TextColor3 = config.Color or CurrentTheme.Text
-    label.TextSize = config.TextSize or 16
-    label.Font = config.Font or Enum.Font.GothamMedium
-    label.TextWrapped = config.Wrapped or false
-    label.TextXAlignment = config.Alignment or Enum.TextXAlignment.Left
-    label.ZIndex = 12
-    label.Parent = parent
-    
-    if config.Gradient then
-        self:CreateGradient(label, config.Gradient, 0)
-    end
-    
-    return label
-end
-
-function RicharliSON:CreateCard(parent, config)
-    config = config or {}
-    
-    local card = Instance.new("Frame")
-    card.Name = config.Name or "Card"
-    card.Size = config.Size or UDim2.new(1, 0, 0, 80)
-    card.BackgroundColor3 = CurrentTheme.Surface
-    card.BackgroundTransparency = 0.3
-    card.BorderSizePixel = 0
-    card.ZIndex = 11
-    card.Parent = parent
-    
-    self:CreateCorner(card, UDim.new(0, 12))
-    self:CreateStroke(card, CurrentTheme.Primary, 1, 0.9)
-    
-    return card
-end
-
-function RicharliSON:CreateToggle(parent, config)
-    config = config or {}
-    local text = config.Text or "Toggle"
-    local default = config.Default or false
-    local callback = config.Callback or function() end
-    
-    local container = Instance.new("Frame")
-    container.Name = config.Name or "Toggle"
-    container.Size = UDim2.new(1, 0, 0, 40)
-    container.BackgroundTransparency = 1
-    container.ZIndex = 12
-    container.Parent = parent
-    
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -70, 1, 0)
-    label.BackgroundTransparency = 1
-    label.Text = text
-    label.TextColor3 = CurrentTheme.Text
-    label.TextSize = 15
-    label.Font = Enum.Font.GothamMedium
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.ZIndex = 12
-    label.Parent = container
-    
-    local toggleBg = Instance.new("Frame")
-    toggleBg.Size = UDim2.new(0, 50, 0, 26)
-    toggleBg.Position = UDim2.new(1, -50, 0.5, -13)
-    toggleBg.BackgroundColor3 = default and CurrentTheme.Success or Color3.fromRGB(60, 60, 70)
-    toggleBg.BorderSizePixel = 0
-    toggleBg.ZIndex = 12
-    toggleBg.Parent = container
-    self:CreateCorner(toggleBg, UDim.new(1, 0))
-    
-    local knob = Instance.new("Frame")
-    knob.Size = UDim2.new(0, 22, 0, 22)
-    knob.Position = default and UDim2.new(1, -24, 0.5, -11) or UDim2.new(0, 2, 0.5, -11)
-    knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    knob.BorderSizePixel = 0
-    knob.ZIndex = 13
-    knob.Parent = toggleBg
-    self:CreateCorner(knob, UDim.new(1, 0))
-    
-    local enabled = default
-    
-    local function update()
-        enabled = not enabled
-        self:Tween(toggleBg, {BackgroundColor3 = enabled and CurrentTheme.Success or Color3.fromRGB(60, 60, 70)}, 0.3)
-        self:Tween(knob, {Position = enabled and UDim2.new(1, -24, 0.5, -11) or UDim2.new(0, 2, 0.5, -11)}, 0.3, Enum.EasingStyle.Back)
-        callback(enabled)
-    end
-    
-    toggleBg.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            update()
-        end
-    end)
-    
-    return container
-end
-
-function RicharliSON:CreateSlider(parent, config)
-    config = config or {}
-    local text = config.Text or "Slider"
-    local min = config.Min or 0
-    local max = config.Max or 100
-    local default = config.Default or 50
-    local callback = config.Callback or function() end
-    
-    local container = Instance.new("Frame")
-    container.Name = config.Name or "Slider"
-    container.Size = UDim2.new(1, 0, 0, 55)
-    container.BackgroundTransparency = 1
-    container.ZIndex = 12
-    container.Parent = parent
-    
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -60, 0, 20)
-    label.BackgroundTransparency = 1
-    label.Text = text
-    label.TextColor3 = CurrentTheme.Text
-    label.TextSize = 15
-    label.Font = Enum.Font.GothamMedium
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.ZIndex = 12
-    label.Parent = container
-    
-    local valueLabel = Instance.new("TextLabel")
-    valueLabel.Size = UDim2.new(0, 50, 0, 20)
-    valueLabel.Position = UDim2.new(1, -50, 0, 0)
-    valueLabel.BackgroundTransparency = 1
-    valueLabel.Text = tostring(default)
-    valueLabel.TextColor3 = CurrentTheme.Primary
-    valueLabel.TextSize = 15
-    valueLabel.Font = Enum.Font.GothamBold
-    valueLabel.TextXAlignment = Enum.TextXAlignment.Right
-    valueLabel.ZIndex = 12
-    valueLabel.Parent = container
-    
-    local track = Instance.new("Frame")
-    track.Size = UDim2.new(1, 0, 0, 8)
-    track.Position = UDim2.new(0, 0, 0, 35)
-    track.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
-    track.BorderSizePixel = 0
-    track.ZIndex = 12
-    track.Parent = container
-    self:CreateCorner(track, UDim.new(1, 0))
-    
-    local fill = Instance.new("Frame")
-    fill.Size = UDim2.new((default - min) / (max - min), 0, 1, 0)
-    fill.BackgroundColor3 = CurrentTheme.Primary
-    fill.BorderSizePixel = 0
-    fill.ZIndex = 13
-    fill.Parent = track
-    self:CreateCorner(fill, UDim.new(1, 0))
-    self:CreateGradient(fill, {CurrentTheme.Primary, CurrentTheme.Secondary}, 0)
-    
-    local knob = Instance.new("Frame")
-    knob.Size = UDim2.new(0, 18, 0, 18)
-    knob.Position = UDim2.new((default - min) / (max - min), -9, 0.5, -9)
-    knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    knob.BorderSizePixel = 0
-    knob.ZIndex = 14
-    knob.Parent = track
-    self:CreateCorner(knob, UDim.new(1, 0))
-    self:CreateStroke(knob, CurrentTheme.Primary, 2, 0)
-    
-    local dragging = false
-    
-    local function update(input)
-        local pos = math.clamp((input.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X, 0, 1)
-        local value = math.floor(min + (pos * (max - min)))
-        fill.Size = UDim2.new(pos, 0, 1, 0)
-        knob.Position = UDim2.new(pos, -9, 0.5, -9)
-        valueLabel.Text = tostring(value)
-        callback(value)
-    end
-    
-    knob.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-        end
-    end)
-    
-    track.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            update(input)
-            dragging = true
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            update(input)
-        end
-    end)
-    
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-    
-    return container
-end
-
-function RicharliSON:CreateDropdown(parent, config)
-    config = config or {}
-    local text = config.Text or "Select..."
-    local options = config.Options or {"Option 1", "Option 2", "Option 3"}
-    local callback = config.Callback or function() end
-    
-    local container = Instance.new("Frame")
-    container.Name = config.Name or "Dropdown"
-    container.Size = UDim2.new(1, 0, 0, 40)
-    container.BackgroundTransparency = 1
-    container.ZIndex = 12
-    container.Parent = parent
-    
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, 0, 0, 40)
-    btn.BackgroundColor3 = CurrentTheme.Surface
-    btn.Text = text .. "   ▼"
-    btn.TextColor3 = CurrentTheme.Text
-    btn.TextSize = 15
-    btn.Font = Enum.Font.GothamMedium
-    btn.AutoButtonColor = false
-    btn.ZIndex = 12
-    btn.Parent = container
-    self:CreateCorner(btn, UDim.new(0, 10))
-    self:CreateStroke(btn, CurrentTheme.Primary, 1, 0.8)
-    
-    local optionsFrame = Instance.new("Frame")
-    optionsFrame.Size = UDim2.new(1, 0, 0, 0)
-    optionsFrame.Position = UDim2.new(0, 0, 0, 45)
-    optionsFrame.BackgroundColor3 = CurrentTheme.Surface
-    optionsFrame.BorderSizePixel = 0
-    optionsFrame.ClipsDescendants = true
-    optionsFrame.ZIndex = 15
-    optionsFrame.Visible = false
-    optionsFrame.Parent = container
-    self:CreateCorner(optionsFrame, UDim.new(0, 10))
-    
-    local optionsLayout = Instance.new("UIListLayout")
-    optionsLayout.Padding = UDim.new(0, 2)
-    optionsLayout.Parent = optionsFrame
-    
-    local open = false
-    
-    for _, option in ipairs(options) do
-        local optBtn = Instance.new("TextButton")
-        optBtn.Size = UDim2.new(1, 0, 0, 32)
-        optBtn.BackgroundColor3 = CurrentTheme.Surface
-        optBtn.Text = option
-        optBtn.TextColor3 = CurrentTheme.TextDim
-        optBtn.TextSize = 14
-        optBtn.Font = Enum.Font.Gotham
-        optBtn.AutoButtonColor = false
-        optBtn.ZIndex = 16
-        optBtn.Parent = optionsFrame
-        
-        optBtn.MouseEnter:Connect(function()
-            self:Tween(optBtn, {BackgroundColor3 = Color3.fromRGB(CurrentTheme.Surface.R * 255 + 20, CurrentTheme.Surface.G * 255 + 20, CurrentTheme.Surface.B * 255 + 20)}, 0.2)
-            optBtn.TextColor3 = CurrentTheme.Text
-        end)
-        
-        optBtn.MouseLeave:Connect(function()
-            self:Tween(optBtn, {BackgroundColor3 = CurrentTheme.Surface}, 0.2)
-            optBtn.TextColor3 = CurrentTheme.TextDim
-        end)
-        
-        optBtn.MouseButton1Click:Connect(function()
-            btn.Text = option .. "   ▼"
-            callback(option)
-            open = false
-            self:Tween(optionsFrame, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
-            task.wait(0.3)
-            optionsFrame.Visible = false
-        end)
-    end
-    
-    btn.MouseButton1Click:Connect(function()
-        open = not open
-        if open then
-            optionsFrame.Visible = true
-            self:Tween(optionsFrame, {Size = UDim2.new(1, 0, 0, #options * 34)}, 0.3, Enum.EasingStyle.Back)
-            btn.Text = text .. "   ▲"
-        else
-            self:Tween(optionsFrame, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
-            task.wait(0.3)
-            optionsFrame.Visible = false
-            btn.Text = text .. "   ▼"
-        end
-    end)
-    
-    return container
-end
-
-function RicharliSON:CreateNotification(config)
-    config = config or {}
-    local text = config.Text or "Notification"
-    local type = config.Type or "Info" -- Info, Success, Warning, Error
-    local duration = config.Duration or 3
-    
-    local colors = {
-        Info = CurrentTheme.Primary,
-        Success = CurrentTheme.Success,
-        Warning = CurrentTheme.Warning,
-        Error = CurrentTheme.Error
-    }
-    
-    local icons = {
-        Info = "ℹ",
-        Success = "✓",
-        Warning = "⚠",
-        Error = "✕"
-    }
-    
-    local player = Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
-    
-    local notifGui = Instance.new("ScreenGui")
-    notifGui.Name = "RicharliSON_Notification"
-    notifGui.ResetOnSpawn = false
-    notifGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    notifGui.Parent = playerGui
-    
-    local notifFrame = Instance.new("Frame")
-    notifFrame.Size = UDim2.new(0, 320, 0, 70)
-    notifFrame.Position = UDim2.new(1, 20, 0.9, 0)
-    notifFrame.BackgroundColor3 = CurrentTheme.Surface
-    notifFrame.BorderSizePixel = 0
-    notifFrame.ZIndex = 100
-    notifFrame.Parent = notifGui
-    self:CreateCorner(notifFrame, UDim.new(0, 12))
-    self:CreateStroke(notifFrame, colors[type], 2, 0.3)
-    
-    local icon = Instance.new("TextLabel")
-    icon.Size = UDim2.new(0, 40, 0, 40)
-    icon.Position = UDim2.new(0, 15, 0.5, -20)
-    icon.BackgroundColor3 = colors[type]
-    icon.Text = icons[type]
-    icon.TextColor3 = Color3.fromRGB(255, 255, 255)
-    icon.TextSize = 20
-    icon.Font = Enum.Font.GothamBold
-    icon.ZIndex = 101
-    icon.Parent = notifFrame
-    self:CreateCorner(icon, UDim.new(0, 10))
-    
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -75, 1, -20)
-    label.Position = UDim2.new(0, 65, 0, 10)
-    label.BackgroundTransparency = 1
-    label.Text = text
-    label.TextColor3 = CurrentTheme.Text
-    label.TextSize = 15
-    label.Font = Enum.Font.GothamMedium
-    label.TextWrapped = true
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.ZIndex = 101
-    label.Parent = notifFrame
-    
-    -- Animation entrée
-    self:Tween(notifFrame, {Position = UDim2.new(1, -340, 0.9, 0)}, 0.6, Enum.EasingStyle.Back)
-    
-    -- Barre de progression
-    local progress = Instance.new("Frame")
-    progress.Size = UDim2.new(1, 0, 0, 3)
-    progress.Position = UDim2.new(0, 0, 1, -3)
-    progress.BackgroundColor3 = colors[type]
-    progress.BorderSizePixel = 0
-    progress.ZIndex = 102
-    progress.Parent = notifFrame
-    
-    self:Tween(progress, {Size = UDim2.new(0, 0, 0, 3)}, duration)
-    
-    task.wait(duration)
-    
-    -- Animation sortie
-    self:Tween(notifFrame, {Position = UDim2.new(1, 20, 0.9, 0)}, 0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.In, function()
-        notifGui:Destroy()
-    end)
-end
-
-return RicharliSON
+return Library
