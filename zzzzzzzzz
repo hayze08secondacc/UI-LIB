@@ -844,7 +844,8 @@ local function CreateDropdown(parent, title, description, options, default, call
     local spacing = 5
     local dropdownWidth = 140
     local optionsHeight = math.max(#options * optionHeight, optionHeight)
-    local openHeight = closedHeight + spacing + optionsHeight
+    local menuPadding = 6
+    local openHeight = closedHeight + spacing + optionsHeight + menuPadding
 
     row.ClipsDescendants = true
 
