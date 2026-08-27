@@ -386,6 +386,7 @@ local PageContainer = New("ScrollingFrame", {
     ScrollBarImageColor3 = Theme.Border,
     AutomaticCanvasSize = Enum.AutomaticSize.Y,
     CanvasSize = UDim2.new(),
+    ClipsDescendants = false,
     ZIndex = 33
 }, Content)
 
@@ -400,12 +401,13 @@ local CurrentPageName
 
 local function CreatePage(name)
 local page = New("Frame", {
-Name = name,
-Size = UDim2.new(1, 0, 0, 0),
-AutomaticSize = Enum.AutomaticSize.Y,
-BackgroundTransparency = 1,
-Visible = false,
-ZIndex = 34
+    Name = name,
+    Size = UDim2.new(1, 0, 0, 0),
+    AutomaticSize = Enum.AutomaticSize.Y,
+    BackgroundTransparency = 1,
+    Visible = false,
+    ClipsDescendants = false,
+    ZIndex = 34
 }, PageContainer)
 
 New("UIListLayout", {
