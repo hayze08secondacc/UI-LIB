@@ -1,0 +1,71 @@
+local Library = loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/hayze08secondacc/UI-LIB/refs/heads/main/maddiSON"
+))()
+
+local Window = Library:CreateWindow()
+
+local Main = Window:CreateTab({
+    Name = "Main",
+    Icon = "House"
+})
+
+local Section = Main:CreateSection(
+    "Player",
+    "Player settings."
+)
+
+Section:CreateButton({
+    Name = "Test",
+    Description = "Test button.",
+    Callback = function()
+        print("Clicked")
+    end
+})
+
+Section:CreateToggle({
+    Name = "Enable feature",
+    Description = "Turn the feature on or off.",
+    Default = false,
+    Callback = function(enabled)
+        print("Toggle state:", enabled)
+    end
+})
+
+Section:CreateSlider({
+    Name = "Walk speed",
+    Description = "Change your movement speed.",
+    Minimum = 16,
+    Maximum = 100,
+    Default = 16,
+    Callback = function(value)
+        print("Slider value:", value)
+    end
+})
+
+Section:CreateDropdown({
+    Name = "Choose theme",
+    Description = "Select the interface theme.",
+    Options = {"Dark", "Light", "Red"},
+    Default = "Dark",
+    Callback = function(selected)
+        print("Selected theme:", selected)
+    end
+})
+
+Section:CreateKeybind({
+    Name = "Test keybind",
+    Description = "Press a key to run the callback.",
+    Default = Enum.KeyCode.RightShift,
+    Callback = function()
+        print("Keybind pressed")
+    end
+})
+
+Section:CreateTextbox({
+    Name = "Player name",
+    Description = "Enter a player name.",
+    Placeholder = "Type a name...",
+    Callback = function(text)
+        print("Textbox value:", text)
+    end
+})
