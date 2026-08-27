@@ -157,16 +157,11 @@ local Grid = New("Frame", {
     ZIndex = 12
 }, WindowBackdrop)
 
-local verticalLines = {}
-local horizontalLines = {}
-
-local lineCount = 18
-
-for i = 1, lineCount do
+for i = 1, 18 do
     New("Frame", {
-        Size = UDim2.new(0, 1, 0.94, 0),
+        Size = UDim2.new(0, 1, 0.92, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(i / lineCount, 0, 0.5, 0),
+        Position = UDim2.new(i / 18, 0, 0.5, 0),
         Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
@@ -175,9 +170,9 @@ for i = 1, lineCount do
     }, Grid)
 
     New("Frame", {
-        Size = UDim2.new(0.94, 0, 0, 1),
+        Size = UDim2.new(0.92, 0, 0, 1),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(0.5, 0, i / lineCount, 0),
+        Position = UDim2.new(0.5, 0, i / 18, 0),
         Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
