@@ -453,19 +453,18 @@ local function ResolveIcon(icon)
     return nil
 end
 
-local function CreateCategory(name, icon)
 local button = New("TextButton", {
-Name = name,
-Size = UDim2.new(1, 0, 0, 38),
-BackgroundColor3 = Theme.Element,
-BorderSizePixel = 0,
-Text = "",
-Font = Enum.Font.GothamSemibold,
-TextSize = 11,
-TextColor3 = Theme.SoftText,
-TextXAlignment = Enum.TextXAlignment.Left,
-AutoButtonColor = false,
-ZIndex = 34
+    Name = name,
+    Size = UDim2.new(1, 0, 0, 38),
+    BackgroundColor3 = Theme.Element,
+    BorderSizePixel = 0,
+    Text = name,
+    Font = Enum.Font.GothamSemibold,
+    TextSize = 11,
+    TextColor3 = Theme.White,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    AutoButtonColor = false,
+    ZIndex = 34
 }, Navigation)
 
 Corner(button, 8)
@@ -498,21 +497,21 @@ ZIndex = 35
 
 
 button.MouseEnter:Connect(function()
-if CurrentPageName ~= name then
-Tween(button, 0.15, {
-BackgroundColor3 = Theme.Hover,
-TextColor3 = Theme.Text
-})
-end
+    if CurrentPageName ~= name then
+        Tween(button, 0.15, {
+            BackgroundColor3 = Theme.Hover,
+            TextColor3 = Theme.White
+        })
+    end
 end)
 
 button.MouseLeave:Connect(function()
-if CurrentPageName ~= name then
-Tween(button, 0.15, {
-BackgroundColor3 = Theme.Element,
-TextColor3 = Theme.SoftText
-})
-end
+    if CurrentPageName ~= name then
+        Tween(button, 0.15, {
+            BackgroundColor3 = Theme.Element,
+            TextColor3 = Theme.White
+        })
+    end
 end)
 
 button.MouseButton1Click:Connect(function()
@@ -526,7 +525,7 @@ local otherIndicator = otherButton:FindFirstChild("Indicator")
 
 Tween(otherButton, 0.18, {
     BackgroundColor3 = active and Theme.White or Theme.Element,
-    TextColor3 = Theme.Text
+    TextColor3 = active and Theme.Black or Theme.White
 })
 
 if otherIndicator then
@@ -1244,16 +1243,17 @@ function WindowObject:CreateTab(data)
         )
     end
 
-    if not CurrentPageName then
-        page.Visible = true
-        button.BackgroundColor3 = Theme.White
-        CurrentPageName = name
+if not CurrentPageName then
+    page.Visible = true
+    button.BackgroundColor3 = Theme.White
+    button.TextColor3 = Theme.Black
+    CurrentPageName = name
 
-        local indicator = button:FindFirstChild("Indicator")
-        if indicator then
-            indicator.BackgroundTransparency = 0
-        end
+    local indicator = button:FindFirstChild("Indicator")
+    if indicator then
+        indicator.BackgroundTransparency = 0
     end
+end
 
     return TabObject
 end
