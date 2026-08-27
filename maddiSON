@@ -10,6 +10,9 @@ local Library = {}
 function Library:CreateWindow(options)
 options = options or {}
 
+local windowTitle = tostring(options.Title or "MaddiSON")
+local windowSubtitle = tostring(options.Subtitle or "maddiSON")
+
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
@@ -343,7 +346,7 @@ New("TextLabel", {
 Position = UDim2.fromOffset(58, 15),
 Size = UDim2.fromOffset(240, 24),
 BackgroundTransparency = 1,
-Text = "MaddiSON",
+Text = windowTitle,
 Font = Enum.Font.GothamBold,
 TextSize = 18,
 TextColor3 = Theme.Text,
@@ -355,7 +358,7 @@ New("TextLabel", {
 Position = UDim2.fromOffset(59, 39),
 Size = UDim2.fromOffset(250, 14),
 BackgroundTransparency = 1,
-Text = "v1.0 ui",
+Text = windowSubtitle,
 Font = Enum.Font.GothamMedium,
 TextSize = 8,
 TextColor3 = Theme.Muted,
