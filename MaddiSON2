@@ -133,13 +133,14 @@ local BackdropGradient = New("UIGradient", {
 }, WindowBackdrop)
 
 -- Rounded mask that keeps the grid inside the window
-local GridMask = New("Frame", {
+local GridMask = New("CanvasGroup", {
     Name = "GridMask",
     Position = UDim2.fromOffset(1, 1),
     Size = UDim2.new(1, -2, 1, -2),
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     ClipsDescendants = true,
+    GroupTransparency = 0,
     ZIndex = 12
 }, WindowBackdrop)
 
@@ -147,8 +148,8 @@ Corner(GridMask, 13)
 
 local Grid = New("Frame", {
     Name = "InnerGeometricGrid",
-    Position = UDim2.fromOffset(-90, -90),
-    Size = UDim2.new(1, 180, 1, 180),
+    Position = UDim2.fromScale(0, 0),
+    Size = UDim2.fromScale(1, 1),
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     ClipsDescendants = true,
