@@ -146,8 +146,8 @@ local Grid = New("Frame", {
 
 for i = 1, 18 do
     New("Frame", {
-        Size = UDim2.new(0, 1, 1.5, 0),
-        Position = UDim2.new(i / 18, 0, -0.25, 0),
+        Size = UDim2.new(0, 1, 1, 0),
+        Position = UDim2.new(i / 18, 0, 0, 0),
         Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
@@ -156,8 +156,8 @@ for i = 1, 18 do
     }, Grid)
 
     New("Frame", {
-        Size = UDim2.new(1.5, 0, 0, 1),
-        Position = UDim2.new(-0.25, 0, i / 18, 0),
+        Size = UDim2.new(1, 0, 0, 1),
+        Position = UDim2.new(0, 0, i / 18, 0),
         Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
