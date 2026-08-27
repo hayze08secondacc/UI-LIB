@@ -448,7 +448,8 @@ local function ResolveIcon(icon)
     return nil
 end
 
-local function CreateCategory(name, icon)
+local function CreateCategory(name, icon, title)
+    title = title or "Overview"
     local button = New("TextButton", {
         Name = name,
         Size = UDim2.new(1, 0, 0, 38),
@@ -551,7 +552,6 @@ local function CreateCategory(name, icon)
             end
         end
 
-        PageTitle.Text = name
         CurrentPageName = name
     end)
 
