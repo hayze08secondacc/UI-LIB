@@ -4,7 +4,6 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local Library = {}
-local GridEnabled = false
 
 function Library:CreateWindow(options)
     options = options or {}
@@ -136,8 +135,8 @@ Rotation = 35
 
 local Grid = New("Frame", {
     Name = "InnerGeometricGrid",
-    Position = UDim2.fromOffset(-90, -90),
-    Size = UDim2.new(1, 180, 1, 180),
+    Position = UDim2.fromScale(0, 0),
+    Size = UDim2.fromScale(1, 1),
     BackgroundTransparency = 1,
     ClipsDescendants = true,
     ZIndex = 12
@@ -1166,15 +1165,13 @@ end)
 local drift = 0
 
 RunService.RenderStepped:Connect(function(deltaTime)
-    if not GridEnabled then
-        return
-    end
+    drift = drift + deltaTime
 
-    drift += deltaTime
-
-    Grid.Position = UDim2.fromOffset(
-        -90 + math.sin(drift * 0.25) * 3,
-        -90 + math.cos(drift * 0.18) * 2
+    Grid.Position = UDim2.new(
+        0,
+        math.sin(drift * 0.25) * 3,
+        0,
+        math.cos(drift * 0.18) * 2
     )
 end)
 
