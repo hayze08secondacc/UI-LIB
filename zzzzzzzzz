@@ -173,6 +173,16 @@ for i = 1, 18 do
     }, horizontal)
 end
 
+local Header = New("Frame", {
+    Name = "Header",
+    Size = UDim2.new(1, 0, 0, 68),
+    BackgroundColor3 = Theme.Surface,
+    BorderSizePixel = 0,
+    ZIndex = 30
+}, Window)
+
+Corner(Header, 14)
+
 Corner(Header, 14)
 
 New("Frame", {
