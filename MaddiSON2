@@ -1167,34 +1167,6 @@ local function Notify(title, message, kind)
     end)
 end
 
-
-local IconIds = {
-    Gear = "rbxassetid://16231085425",
-    House = "rbxassetid://11347112400",
-    Character = "rbxassetid://93915156103067",
-    Shield = "rbxassetid://98159911363596"
-}
-
-local function ResolveIcon(icon)
-    if typeof(icon) == "number" then
-        return "rbxassetid://" .. tostring(icon)
-    end
-
-    if typeof(icon) == "string" then
-        if icon:match("^rbxassetid://") then
-            return icon
-        end
-
-        if IconIds[icon] then
-            return IconIds[icon]
-        end
-
-        return "rbxassetid://" .. icon
-    end
-
-    return nil
-end
-
 local normalSize = UDim2.fromOffset(700, 455)
 local minimized = false
 
@@ -1350,5 +1322,3 @@ Tween(Window, 0.6, {
         end
     })
 ]]
-
-return library
