@@ -7,6 +7,33 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 
+local IconIds = {
+    Gear = "rbxassetid://16231085425",
+    House = "rbxassetid://11347112400",
+    Character = "rbxassetid://93915156103067",
+    Shield = "rbxassetid://98159911363596"
+}
+
+local function ResolveIcon(icon)
+    if typeof(icon) == "number" then
+        return "rbxassetid://" .. tostring(icon)
+    end
+
+    if typeof(icon) == "string" then
+        if icon:match("^rbxassetid://") then
+            return icon
+        end
+
+        if IconIds[icon] then
+            return IconIds[icon]
+        end
+
+        return "rbxassetid://" .. icon
+    end
+
+    return nil
+end
+
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
@@ -445,16 +472,40 @@ local function CreateCategory(name, icon)
         Size = UDim2.new(1, 0, 0, 38),
         BackgroundColor3 = Theme.Element,
         BorderSizePixel = 0,
-        Text = "   " .. icon .. "    " .. name,
-        Font = Enum.Font.GothamSemibold,
-        TextSize = 11,
-        TextColor3 = Theme.SoftText,
-        TextXAlignment = Enum.TextXAlignment.Left,
+        Text = "",
         AutoButtonColor = false,
         ZIndex = 34
     }, Navigation)
 
     Corner(button, 8)
+
+    local iconId = ResolveIcon(icon)
+
+    if iconId then
+        New("ImageLabel", {
+            Name = "Icon",
+            Position = UDim2.fromOffset(12, 9),
+            Size = UDim2.fromOffset(20, 20),
+            BackgroundTransparency = 1,
+            Image = iconId,
+            ImageColor3 = Theme.SoftText,
+            ScaleType = Enum.ScaleType.Fit,
+            ZIndex = 35
+        }, button)
+    end
+
+    local title = New("TextLabel", {
+        Name = "Title",
+        Position = UDim2.fromOffset(40, 0),
+        Size = UDim2.new(1, -48, 1, 0),
+        BackgroundTransparency = 1,
+        Text = name,
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 11,
+        TextColor3 = Theme.SoftText,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 35
+    }, button)
 
     local indicator = New("Frame", {
         Name = "Indicator",
@@ -463,9 +514,97 @@ local function CreateCategory(name, icon)
         BackgroundColor3 = Theme.Black,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        ZIndex = 35
+        ZIndex = 36
     }, button)
 
+    Corner(indicator, 3)
+
+    CategoryButtons[name] = button
+
+    button.MouseEnter:Connect(function()
+        if CurrentPageName ~= name then
+            Tween(button, 0.15, {
+                BackgroundColor3 = Theme.Hover
+            })
+
+            Tween(title, 0.15, {
+                TextColor3 = Theme.Text
+            })
+
+            if iconId then
+                Tween(button.Icon, 0.15, {
+                    ImageColor3 = Theme.Text
+                })
+            end
+        end
+    end)
+
+    button.MouseLeave:Connect(function()
+        if CurrentPageName ~= name then
+            Tween(button, 0.15, {
+                BackgroundColor3 = Theme.Element
+            })
+
+            Tween(title, 0.15, {
+                TextColor3 = Theme.SoftText
+            })
+
+            if iconId then
+                Tween(button.Icon, 0.15, {
+                    ImageColor3 = Theme.SoftText
+                })
+            end
+        end
+    end)
+
+    button.MouseButton1Click:Connect(function()
+        for pageName, page in pairs(Pages) do
+            page.Visible = pageName == name
+        end
+
+        for buttonName, otherButton in pairs(CategoryButtons) do
+            local active = buttonName == name
+            local otherIndicator = otherButton:FindFirstChild("Indicator")
+            local otherTitle = otherButton:FindFirstChild("Title")
+            local otherIcon = otherButton:FindFirstChild("Icon")
+
+            Tween(otherButton, 0.18, {
+                BackgroundColor3 = active and Theme.White or Theme.Element
+            })
+
+            if otherTitle then
+                Tween(otherTitle, 0.18, {
+                    TextColor3 = active and Theme.Black or Theme.SoftText
+                })
+            end
+
+            if otherIcon then
+                Tween(otherIcon, 0.18, {
+                    ImageColor3 = active and Theme.Black or Theme.SoftText
+                })
+            end
+
+            if otherIndicator then
+                Tween(otherIndicator, 0.18, {
+                    BackgroundTransparency = active and 0 or 1
+                })
+            end
+        end
+
+        local subtitles = {
+            Overview = "A focused control surface for MaddiSON.",
+            Controls = "Buttons, toggles, sliders and keybinds.",
+            Appearance = "Fine-tune the visual language of the interface.",
+            Utilities = "Small tools for managing the interface."
+        }
+
+        PageTitle.Text = name
+        PageSubtitle.Text = subtitles[name] or "MaddiSON interface module."
+        CurrentPageName = name
+    end)
+
+    return button
+end
     Corner(indicator, 3)
     CategoryButtons[name] = button
 
@@ -1055,185 +1194,6 @@ local function Notify(title, message, kind)
     end)
 end
 
-local Overview = CreatePage("Overview")
-local Controls = CreatePage("Controls")
-local Appearance = CreatePage("Appearance")
-local Utilities = CreatePage("Utilities")
-
-CreateCategory("Overview", "◆")
-CreateCategory("Controls", "◇")
-CreateCategory("Appearance", "◈")
-CreateCategory("Utilities", "▣")
-
-local overviewSection = CreateSection(
-    Overview,
-    "Welcome to MaddiSON",
-    "A compact interface built around clarity and control."
-)
-
-CreateButton(
-    overviewSection,
-    "Initialize interface",
-    "Play the interface startup sequence.",
-    function()
-        Notify("MaddiSON", "Interface initialized successfully.", "success")
-    end
-)
-
-CreateToggle(
-    overviewSection,
-    "Inner geometry",
-    "Show the animated geometry inside the window.",
-    true,
-    function(enabled)
-        Grid.Visible = enabled
-    end
-)
-
-CreateSlider(
-    overviewSection,
-    "Interface scale",
-    "Adjust the size of the window.",
-    85,
-    115,
-    100,
-    function(value)
-        Tween(WindowScale, 0.2, {
-            Scale = value / 100
-        })
-    end
-)
-
-local controlsSection = CreateSection(
-    Controls,
-    "Interactive components",
-    "Reusable controls for your interface."
-)
-
-CreateButton(
-    controlsSection,
-    "Example button",
-    "Run a sample interface action.",
-    function()
-        Notify("Action complete", "The example button was activated.", "success")
-    end
-)
-
-CreateToggle(
-    controlsSection,
-    "Example toggle",
-    "Enable or disable a configurable feature.",
-    false,
-    function(enabled)
-        Notify(
-            "Toggle updated",
-            enabled and "Feature enabled." or "Feature disabled.",
-            enabled and "success" or "error"
-        )
-    end
-)
-
-CreateSlider(
-    controlsSection,
-    "Intensity",
-    "Change a numeric value from 0 to 100.",
-    0,
-    100,
-    50,
-    function(value)
-        StatusDot.BackgroundColor3 = value > 50 and Theme.Success or Theme.White
-    end
-)
-
-CreateDropdown(
-    controlsSection,
-    "Render mode",
-    "Select a visual rendering profile.",
-    {"Balanced", "Performance", "Quality", "Experimental"},
-    "Balanced",
-    function(option)
-        Notify("Render mode", "Selected: " .. option, "success")
-    end
-)
-
-CreateKeybind(
-    controlsSection,
-    "Quick notification",
-    "Press the assigned key to show a notification.",
-    Enum.KeyCode.F,
-    function()
-        Notify("Keybind activated", "The F key was pressed.", "success")
-    end
-)
-
-CreateTextbox(
-    controlsSection,
-    "Custom message",
-    "Enter a message for MaddiSON.",
-    "Write something...",
-    function(text)
-        if text ~= "" then
-            Notify("Custom message", text, "success")
-        end
-    end
-)
-
-local appearanceSection = CreateSection(
-    Appearance,
-    "Appearance",
-    "A restrained black-and-white visual system."
-)
-
-CreateToggle(
-    appearanceSection,
-    "World blur",
-    "Blur the world behind the window.",
-    true,
-    function(enabled)
-        Tween(Blur, 0.3, {
-            Size = enabled and 5 or 0
-        })
-    end
-)
-
-CreateToggle(
-    appearanceSection,
-    "Inner geometry",
-    "Enable or disable the geometry clipped inside the window.",
-    true,
-    function(enabled)
-        Grid.Visible = enabled
-    end
-)
-
-local utilitiesSection = CreateSection(
-    Utilities,
-    "Utility actions",
-    "Manage the interface window."
-)
-
-CreateButton(
-    utilitiesSection,
-    "Reset position",
-    "Move MaddiSON back to the center.",
-    function()
-        Tween(Window, 0.4, {
-            Position = UDim2.fromScale(0.5, 0.54)
-        })
-
-        Notify("Position reset", "MaddiSON returned to the center.", "success")
-    end
-)
-
-CreateButton(
-    utilitiesSection,
-    "System notification",
-    "Display a sample system message.",
-    function()
-        Notify("System message", "All modules are operating normally.", "success")
-    end
-)
-
 local normalSize = UDim2.fromOffset(700, 455)
 local minimized = false
 
@@ -1358,4 +1318,34 @@ Tween(Window, 0.6, {
     Position = UDim2.fromScale(0.5, 0.5)
 }, Enum.EasingStyle.Back)
 
-Notify("Welcome", "MaddiSON is ready.", "success")
+--[[
+    MaddiSON usage example:
+
+    local Window = MaddiSON:CreateWindow({
+        Title = "MaddiSON",
+        Subtitle = "MODULAR INTERFACE SYSTEM",
+        Size = UDim2.fromOffset(700, 455)
+    })
+
+    local HomeTab = Window:CreateTab("Home", "House")
+    local CharacterTab = Window:CreateTab("Character", "Character")
+    local SettingsTab = Window:CreateTab("Settings", "Gear")
+    local SecurityTab = Window:CreateTab("Security", "Shield")
+
+    -- You can also use your own decal/image ID:
+    local CustomTab = Window:CreateTab("Custom", 1234567890)
+
+    -- Or pass the full Roblox image format:
+    local CustomTab2 = Window:CreateTab(
+        "Custom",
+        "rbxassetid://1234567890"
+    )
+
+    HomeTab:CreateButton({
+        Name = "Example button",
+        Description = "Run an example action.",
+        Callback = function()
+            print("Button pressed")
+        end
+    })
+]]
