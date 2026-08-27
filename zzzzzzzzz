@@ -468,85 +468,75 @@ local function CreateCategory(name, icon)
 
     Corner(button, 8)
 
-local iconId = ResolveIcon(icon)
+    local iconId = ResolveIcon(icon)
 
-if iconId then
-    New("ImageLabel", {
-        Name = "Icon",
-        Position = UDim2.fromOffset(12, 9),
-        Size = UDim2.fromOffset(20, 20),
+    if iconId then
+        New("ImageLabel", {
+            Name = "Icon",
+            Position = UDim2.fromOffset(12, 9),
+            Size = UDim2.fromOffset(20, 20),
+            BackgroundTransparency = 1,
+            Image = iconId,
+            ImageColor3 = Theme.SoftText,
+            ScaleType = Enum.ScaleType.Fit,
+            ZIndex = 35
+        }, button)
+    end
+
+    local indicator = New("Frame", {
+        Name = "Indicator",
+        Position = UDim2.fromOffset(0, 9),
+        Size = UDim2.fromOffset(3, 20),
+        BackgroundColor3 = Theme.Black,
         BackgroundTransparency = 1,
-        Image = iconId,
-        ImageColor3 = Theme.SoftText,
-        ScaleType = Enum.ScaleType.Fit,
+        BorderSizePixel = 0,
         ZIndex = 35
     }, button)
-end
 
+    button.MouseEnter:Connect(function()
+        if CurrentPageName ~= name then
+            Tween(button, 0.15, {
+                BackgroundColor3 = Theme.Hover,
+                TextColor3 = Theme.Text
+            })
+        end
+    end)
 
-local indicator = New("Frame", {
-Name = "Indicator",
-Position = UDim2.fromOffset(0, 9),
-Size = UDim2.fromOffset(3, 20),
-BackgroundColor3 = Theme.Black,
-BackgroundTransparency = 1,
-BorderSizePixel = 0,
-ZIndex = 35
-}, button)
+    button.MouseLeave:Connect(function()
+        if CurrentPageName ~= name then
+            Tween(button, 0.15, {
+                BackgroundColor3 = Theme.Element,
+                TextColor3 = Theme.SoftText
+            })
+        end
+    end)
 
+    button.MouseButton1Click:Connect(function()
+        for pageName, page in pairs(Pages) do
+            page.Visible = pageName == name
+        end
 
-button.MouseEnter:Connect(function()
-    if CurrentPageName ~= name then
-        Tween(button, 0.15, {
-            BackgroundColor3 = Theme.Hover,
-            TextColor3 = Theme.Text
-        })
-    end
-end)
+        for buttonName, otherButton in pairs(CategoryButtons) do
+            local active = buttonName == name
+            local otherIndicator = otherButton:FindFirstChild("Indicator")
 
-button.MouseLeave:Connect(function()
-    if CurrentPageName ~= name then
-        Tween(button, 0.15, {
-            BackgroundColor3 = Theme.Element,
-            TextColor3 = Theme.SoftText
-        })
-    end
-end)
+            Tween(otherButton, 0.18, {
+                BackgroundColor3 = active and Theme.White or Theme.Element,
+                TextColor3 = active and Theme.Black or Theme.SoftText
+            })
 
-button.MouseButton1Click:Connect(function()
-for pageName, page in pairs(Pages) do
-page.Visible = pageName == name
-end
+            if otherIndicator then
+                Tween(otherIndicator, 0.18, {
+                    BackgroundTransparency = active and 0 or 1
+                })
+            end
+        end
 
-for buttonName, otherButton in pairs(CategoryButtons) do
-local active = buttonName == name
-local otherIndicator = otherButton:FindFirstChild("Indicator")
+        PageTitle.Text = name
+        CurrentPageName = name
+    end)
 
-Tween(otherButton, 0.18, {
-    BackgroundColor3 = active and Theme.White or Theme.Element,
-    TextColor3 = active and Theme.Black or Theme.SoftText
-})
-
-if otherIndicator then
-Tween(otherIndicator, 0.18, {
-BackgroundTransparency = active and 0 or 1
-})
-end
-end
-
-local subtitles = {
-Overview = "A focused control surface for MaddiSON.",
-Controls = "Buttons, toggles, sliders and keybinds.",
-Appearance = "Fine-tune the visual language of the interface.",
-Utilities = "Small tools for managing the interface."
-}
-
-PageTitle.Text = name
-PageSubtitle.Text = subtitles[name] or "MaddiSON interface module."
-CurrentPageName = name
-end)
-
-return button
+    return button
 end
 
 local function CreateSection(parent, title, description)
@@ -1312,16 +1302,16 @@ end
     end
 
     if not CurrentPageName then
-        page.Visible = true
-        button.BackgroundColor3 = Theme.White
-        button.TextColor3 = Theme.Black
-        CurrentPageName = name
+    page.Visible = true
+    button.BackgroundColor3 = Theme.White
+    button.TextColor3 = Theme.Black
+    CurrentPageName = name
 
-        local indicator = button:FindFirstChild("Indicator")
-        if indicator then
-            indicator.BackgroundTransparency = 0
-        end
+    local indicator = button:FindFirstChild("Indicator")
+    if indicator then
+        indicator.BackgroundTransparency = 0
     end
+end
 
     return TabObject
 end
