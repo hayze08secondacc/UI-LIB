@@ -135,19 +135,38 @@ ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 20))
 Rotation = 35
 }, WindowBackdrop)
 
-local Grid = New("Frame", {
-    Name = "InnerGeometricGrid",
-    Position = UDim2.fromScale(0, 0),
+local GridClip = New("CanvasGroup", {
+    Name = "GridClip",
     Size = UDim2.fromScale(1, 1),
+    Position = UDim2.fromScale(0, 0),
     BackgroundTransparency = 1,
-    ClipsDescendants = true,
+    BorderSizePixel = 0,
+    GroupTransparency = 0,
     ZIndex = 12
 }, WindowBackdrop)
 
-for i = 1, 18 do
+Corner(GridClip, 14)
+
+local Grid = New("Frame", {
+    Name = "InnerGeometricGrid",
+    Size = UDim2.fromScale(1, 1),
+    Position = UDim2.fromScale(0, 0),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ClipsDescendants = false,
+    ZIndex = 12
+}, GridClip)
+
+local verticalLines = {}
+local horizontalLines = {}
+
+local lineCount = 18
+
+for i = 1, lineCount do
     New("Frame", {
-        Size = UDim2.new(0, 1, 1.5, 0),
-        Position = UDim2.new(i / 18, 0, -0.25, 0),
+        Size = UDim2.new(0, 1, 0.94, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(i / lineCount, 0, 0.5, 0),
         Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
@@ -156,8 +175,9 @@ for i = 1, 18 do
     }, Grid)
 
     New("Frame", {
-        Size = UDim2.new(1.5, 0, 0, 1),
-        Position = UDim2.new(-0.25, 0, i / 18, 0),
+        Size = UDim2.new(0.94, 0, 0, 1),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, i / lineCount, 0),
         Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
@@ -1164,17 +1184,30 @@ end
 end
 end)
 
-local drift = 0
-
 RunService.RenderStepped:Connect(function(deltaTime)
-    drift = drift + deltaTime
+    driftX = (driftX + deltaTime * 0.01) % spacing
+    driftY = (driftY + deltaTime * 0.008) % spacing
 
-    Grid.Position = UDim2.new(
-        0,
-        math.sin(drift * 0.25) * 3,
-        0,
-        math.cos(drift * 0.18) * 2
-    )
+    for _, line in ipairs(Grid:GetChildren()) do
+        if line:IsA("Frame") then
+            if line.Name == "VerticalLine" then
+                local originalIndex = line.LayoutOrder
+            end
+        end
+    end
+
+    for i, line in ipairs(Grid:GetChildren()) do
+        if line:IsA("Frame") then
+            if line.Name == "VerticalLine" then
+                local x = ((i - 1) * spacing - driftX) % 1
+                line.Position = UDim2.new(x, 0, 0, 0)
+
+            elseif line.Name == "HorizontalLine" then
+                local y = ((i - 1) * spacing - driftY) % 1
+                line.Position = UDim2.new(0, 0, y, 0)
+            end
+        end
+    end
 end)
 
 Tween(Window, 0.6, {
