@@ -836,17 +836,17 @@ local function CreateDropdown(parent, title, description, options, default, call
     local selected = default or options[1]
     local opened = false
 
-    row.ClipsDescendants = false
-
     local closedHeight = 46
     local optionHeight = 27
     local spacing = 5
-    local openHeight = closedHeight + spacing + (#options * optionHeight)
+    local dropdownWidth = 140
+
+    row.ClipsDescendants = false
 
     local dropdown = New("TextButton", {
         AnchorPoint = Vector2.new(1, 0),
         Position = UDim2.new(1, -12, 0, 9),
-        Size = UDim2.fromOffset(140, 28),
+        Size = UDim2.fromOffset(dropdownWidth, 28),
         BackgroundColor3 = Theme.Hover,
         BorderSizePixel = 0,
         Text = tostring(selected or "Select") .. " ▾",
@@ -854,7 +854,6 @@ local function CreateDropdown(parent, title, description, options, default, call
         TextSize = 9,
         TextColor3 = Theme.Text,
         AutoButtonColor = false,
-        ClipsDescendants = false,
         ZIndex = 100
     }, row)
 
@@ -863,14 +862,13 @@ local function CreateDropdown(parent, title, description, options, default, call
 
     local optionFrame = New("Frame", {
         AnchorPoint = Vector2.new(1, 0),
-        Position = UDim2.new(1, 0, 1, spacing),
-        Size = UDim2.fromOffset(140, #options * optionHeight),
+        Size = UDim2.fromOffset(dropdownWidth, #options * optionHeight),
         BackgroundColor3 = Theme.Surface,
         BorderSizePixel = 0,
         Visible = false,
         ClipsDescendants = true,
-        ZIndex = 200
-    }, dropdown)
+        ZIndex = 500
+    }, parent)
 
     Corner(optionFrame, 7)
     Stroke(optionFrame, Theme.Border, 1, 0.1)
@@ -890,7 +888,7 @@ local function CreateDropdown(parent, title, description, options, default, call
             TextSize = 9,
             TextColor3 = Theme.SoftText,
             AutoButtonColor = false,
-            ZIndex = 201
+            ZIndex = 501
         }, optionFrame)
 
         optionButton.MouseEnter:Connect(function()
@@ -919,21 +917,54 @@ local function CreateDropdown(parent, title, description, options, default, call
         end)
     end
 
+    local function updateOptionPosition()
+        local rowPosition = row.AbsolutePosition
+        local parentPosition = parent.AbsolutePosition
+        local parentWidth = parent.AbsoluteSize.X
+
+        local rightOffset = parentWidth - (rowPosition.X - parentPosition.X + row.AbsoluteSize.X)
+        local yOffset = rowPosition.Y - parentPosition.Y + closedHeight + spacing
+
+        optionFrame.Position = UDim2.fromOffset(
+            parentWidth - 12 - rightOffset,
+            yOffset
+        )
+    end
+
     dropdown.MouseButton1Click:Connect(function()
         opened = not opened
 
-        optionFrame.Visible = opened
+        if opened then
+            updateOptionPosition()
+            optionFrame.Visible = true
 
-        Tween(row, 0.2, {
-            Size = UDim2.new(
-                1,
-                0,
-                0,
-                opened and openHeight or closedHeight
-            )
-        })
+            Tween(row, 0.2, {
+                Size = UDim2.new(
+                    1,
+                    0,
+                    0,
+                    closedHeight + spacing + (#options * optionHeight)
+                )
+            })
+        else
+            optionFrame.Visible = false
 
-        dropdown.Text = tostring(selected or "Select") .. (opened and " ▴" or " ▾")
+            Tween(row, 0.2, {
+                Size = UDim2.new(1, 0, 0, closedHeight)
+            })
+        end
+    end)
+
+    parent:GetPropertyChangedSignal("AbsolutePosition"):Connect(function()
+        if opened then
+            updateOptionPosition()
+        end
+    end)
+
+    parent:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+        if opened then
+            updateOptionPosition()
+        end
     end)
 
     return row
