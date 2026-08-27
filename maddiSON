@@ -542,7 +542,10 @@ local IconIds = {
 Gear = "rbxassetid://16231085425",
 House = "rbxassetid://11347112400",
 Character = "rbxassetid://93915156103067",
-Shield = "rbxassetid://98159911363596"
+Shield = "rbxassetid://98159911363596",
+Crosshair = "rbxassetid://114537233921022",
+Eye = "rbxassetid://6523858394",
+Activity = "rbxassetid://105011543514204"
 }
 
 local function ResolveIcon(icon)
