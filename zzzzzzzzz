@@ -464,6 +464,11 @@ local function CreateCategory(name, icon)
     }, Navigation)
 
     CategoryButtons[name] = button
+for _, child in ipairs(button:GetChildren()) do
+    if child:IsA("TextLabel") and child.Name == "Label" then
+        child:Destroy()
+    end
+end
     Corner(button, 8)
 
     local iconId = ResolveIcon(icon)
