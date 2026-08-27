@@ -456,6 +456,12 @@ local function CreateCategory(name, icon)
         BackgroundColor3 = Theme.Element,
         BorderSizePixel = 0,
         Text = name,
+
+local buttonPadding = New("UIPadding", {
+    PaddingLeft = UDim.new(0, icon and 42 or 12),
+    PaddingRight = UDim.new(0, 10)
+}, button)
+
         Font = Enum.Font.GothamSemibold,
         TextSize = 11,
         TextColor3 = Theme.SoftText,
@@ -1318,10 +1324,6 @@ end
 -- Set the title immediately when the first tab is created.
 if CurrentPageName == name then
     PageTitle.Text = name
-local buttonPadding = New("UIPadding", {
-    PaddingLeft = UDim.new(0, icon and 42 or 12),
-    PaddingRight = UDim.new(0, 10)
-}, button)
 end
 
     return TabObject
