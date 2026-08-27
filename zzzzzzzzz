@@ -1324,18 +1324,18 @@ end
 if not CurrentPageName then
     page.Visible = true
     button.BackgroundColor3 = Theme.White
-
-    local label = button:FindFirstChild("Label")
-    if label then
-        label.TextColor3 = Theme.Black
-    end
-
+    button.TextColor3 = Theme.Black
     CurrentPageName = name
 
     local indicator = button:FindFirstChild("Indicator")
     if indicator then
         indicator.BackgroundTransparency = 0
     end
+end
+
+-- Set the title immediately when the first tab is created.
+if CurrentPageName == name then
+    PageTitle.Text = name
 end
 
     return TabObject
