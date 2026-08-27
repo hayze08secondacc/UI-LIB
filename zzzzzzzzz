@@ -378,15 +378,15 @@ local PageTitle = New("TextLabel", {
 }, Content)
 
 local PageContainer = New("ScrollingFrame", {
-Position = UDim2.fromOffset(26, 57),
-Size = UDim2.new(1, -52, 1, -75),
-BackgroundTransparency = 1,
-BorderSizePixel = 0,
-ScrollBarThickness = 2,
-ScrollBarImageColor3 = Theme.Border,
-AutomaticCanvasSize = Enum.AutomaticSize.Y,
-CanvasSize = UDim2.new(),
-ZIndex = 33
+    Position = UDim2.fromOffset(26, 83),
+    Size = UDim2.new(1, -52, 1, -101),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ScrollBarThickness = 2,
+    ScrollBarImageColor3 = Theme.Border,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    CanvasSize = UDim2.new(),
+    ZIndex = 33
 }, Content)
 
 New("UIListLayout", {
