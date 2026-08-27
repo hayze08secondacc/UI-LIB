@@ -814,49 +814,57 @@ return row
 end
 
 local function CreateToggle(parent, title, description, default, callback)
-local row = CreateRow(parent, title, description)
-local enabled = default == true
+    local row = CreateRow(parent, title, description)
+    local enabled = default == true
 
-local toggle = New("TextButton", {
-AnchorPoint = Vector2.new(1, 0.5),
-Position = UDim2.new(1, -12, 0.5, 0),
-Size = UDim2.fromOffset(45, 24),
-BackgroundColor3 = enabled and Theme.White or Theme.Hover,
-BorderSizePixel = 0,
-Text = "",
-AutoButtonColor = false,
-ZIndex = 39
-}, row)
+    local toggle = New("TextButton", {
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, -12, 0.5, 0),
+        Size = UDim2.fromOffset(45, 24),
+        BackgroundColor3 = enabled and Theme.White or Theme.Hover,
+        BorderSizePixel = 0,
+        Text = "",
+        AutoButtonColor = false,
+        ZIndex = 39
+    }, row)
 
-Corner(toggle, 12)
-Stroke(toggle, Theme.Border, 1, 0.1)
+    Corner(toggle, 12)
+    Stroke(toggle, Theme.Border, 1, 0.1)
 
-local knob = New("Frame", {
-AnchorPoint = Vector2.new(0.5, 0.5),
-Position = enabled and UDim2.new(1, -12, 0.5, 0) or UDim2.new(0, 12, 0.5, 0),
-Size = UDim2.fromOffset(16, 16),
-BackgroundColor3 = enabled and Theme.Black or Theme.Muted,
-BorderSizePixel = 0,
-ZIndex = 40
-}, toggle)
+    local knob = New("Frame", {
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = enabled
+            and UDim2.new(1, -12, 0.5, 0)
+            or UDim2.new(0, 12, 0.5, 0),
+        Size = UDim2.fromOffset(16, 16),
+        BackgroundColor3 = enabled and Theme.Black or Theme.Muted,
+        BorderSizePixel = 0,
+        ZIndex = 40
+    }, toggle)
 
-Corner(knob, 16)
+    Corner(knob, 16)
 
-toggle.MouseButton1Click:Connect(function()
-enabled = not enabled
+    toggle.MouseButton1Click:Connect(function()
+        enabled = not enabled
 
-Tween(toggle, 0.2, {
-BackgroundColor3 = enabled and Theme.White or Theme.Hover
-})
+        Tween(toggle, 0.2, {
+            BackgroundColor3 = enabled and Theme.White or Theme.Hover
+        })
 
-Tween(knob, 0.2, {
-Position = enabled and UDim2.new(1, -12, 0.5, 0) or UDim2.new(0, 12, 0.5, 0),
-BackgroundColor3 = enabled and Theme.Black or Theme.Muted
-})
+        Tween(knob, 0.2, {
+            Position = enabled
+                and UDim2.new(1, -12, 0.5, 0)
+                or UDim2.new(0, 12, 0.5, 0),
 
-SafeCallback(callback, enabled)
+            BackgroundColor3 = enabled
+                and Theme.Black
+                or Theme.Muted
+        })
 
-return row
+        SafeCallback(callback, enabled)
+    end)
+
+    return row
 end
 
 local function CreateSlider(parent, title, description, minimum, maximum, default, callback)
@@ -1125,7 +1133,6 @@ local function CreateKeybind(parent, title, description, defaultKey, callback)
 
     return row
 end
-
 
 local normalSize = UDim2.fromOffset(700, 455)
 local minimized = false
