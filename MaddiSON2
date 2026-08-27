@@ -102,115 +102,14 @@ Tween(Blur, 0.4, {Size = 5})
 local Window = New("Frame", {
     Name = "Window",
     AnchorPoint = Vector2.new(0.5, 0.5),
-    Position = UDim2.fromScale(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.54),
     Size = UDim2.fromOffset(700, 455),
-    BackgroundTransparency = 1,
+    BackgroundColor3 = Theme.Window,
     BorderSizePixel = 0,
-    ClipsDescendants = false,
+    ClipsDescendants = true,
     ZIndex = 10
 }, ScreenGui)
 
--- Outer visual shell
-local OuterShell = New("Frame", {
-    Name = "OuterShell",
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    Position = UDim2.fromScale(0.5, 0.5),
-    Size = UDim2.fromScale(1, 1),
-    BackgroundColor3 = Theme.Window,
-    BorderSizePixel = 0,
-    ClipsDescendants = true,
-    ZIndex = 10
-}, Window)
-
-Corner(OuterShell, 16)
-
-local OuterStroke = Stroke(
-    OuterShell,
-    Theme.White,
-    1.25,
-    0.12
-)
-
-OuterStroke.LineJoinMode = Enum.LineJoinMode.Round
-
--- Very subtle inner border
-local InnerBorder = New("Frame", {
-    Name = "InnerBorder",
-    Position = UDim2.fromOffset(1, 1),
-    Size = UDim2.new(1, -2, 1, -2),
-    BackgroundTransparency = 1,
-    BorderSizePixel = 0,
-    ClipsDescendants = true,
-    ZIndex = 11
-}, OuterShell)
-
-Corner(InnerBorder, 15)
-
-local InnerStroke = Stroke(
-    InnerBorder,
-    Theme.Border,
-    1,
-    0.28
-)
-
-InnerStroke.LineJoinMode = Enum.LineJoinMode.Round
-
--- Only this CanvasGroup contains the animated geometry.
-local InnerViewport = New("CanvasGroup", {
-    Name = "InnerViewport",
-    Position = UDim2.fromOffset(2, 2),
-    Size = UDim2.new(1, -4, 1, -4),
-    BackgroundColor3 = Theme.Window,
-    BackgroundTransparency = 0,
-    GroupTransparency = 0,
-    BorderSizePixel = 0,
-    ClipsDescendants = true,
-    ZIndex = 12
-}, OuterShell)
-
-Corner(InnerViewport, 14)
-
-local ViewportGradient = New("UIGradient", {
-    Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(8, 8, 8)),
-        ColorSequenceKeypoint.new(0.55, Color3.fromRGB(14, 14, 14)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(22, 22, 22))
-    }),
-    Rotation = 35
-}, InnerViewport)
-
--- Animated geometry is a descendant of InnerViewport only.
-local Grid = New("Frame", {
-    Name = "GeometricBackground",
-    Position = UDim2.fromOffset(-90, -90),
-    Size = UDim2.new(1, 180, 1, 180),
-    BackgroundTransparency = 1,
-    BorderSizePixel = 0,
-    ClipsDescendants = true,
-    ZIndex = 13
-}, InnerViewport)
-
-for i = 1, 18 do
-    local diagonalA = New("Frame", {
-        Size = UDim2.new(0, 1, 1.5, 0),
-        Position = UDim2.new(i / 18, 0, -0.25, 0),
-        Rotation = 16,
-        BackgroundColor3 = Theme.White,
-        BackgroundTransparency = 0.978,
-        BorderSizePixel = 0,
-        ZIndex = 13
-    }, Grid)
-
-    local diagonalB = New("Frame", {
-        Size = UDim2.new(1.5, 0, 0, 1),
-        Position = UDim2.new(-0.25, 0, i / 18, 0),
-        Rotation = -16,
-        BackgroundColor3 = Theme.White,
-        BackgroundTransparency = 0.982,
-        BorderSizePixel = 0,
-        ZIndex = 13
-    }, Grid)
-end
 Corner(Window, 14)
 Stroke(Window, Theme.Border, 1, 0.05)
 
