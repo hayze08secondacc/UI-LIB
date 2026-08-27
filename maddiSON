@@ -497,16 +497,16 @@ ZIndex = 33
 }, Content)
 
 local PageContainer = New("ScrollingFrame", {
-Position = UDim2.fromOffset(26, 83),
-Size = UDim2.new(1, -52, 1, -101),
-BackgroundTransparency = 1,
-BorderSizePixel = 0,
-ScrollBarThickness = 2,
-ScrollBarImageColor3 = Theme.Border,
-AutomaticCanvasSize = Enum.AutomaticSize.Y,
-CanvasSize = UDim2.new(),
-ClipsDescendants = false,
-ZIndex = 33
+    Position = UDim2.fromOffset(26, 83),
+    Size = UDim2.new(1, -52, 1, -101),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ScrollBarThickness = 2,
+    ScrollBarImageColor3 = Theme.Border,
+    AutomaticCanvasSize = Enum.AutomaticSize.Y,
+    CanvasSize = UDim2.new(),
+    ClipsDescendants = true,
+    ZIndex = 33
 }, Content)
 
 New("UIListLayout", {
