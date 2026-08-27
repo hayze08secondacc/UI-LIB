@@ -1098,13 +1098,13 @@ local startPosition
 local dragging = false
 
 Header.InputBegan:Connect(function(input)
-if input.UserInputType == Enum.UserInputType.MouseButton1
-or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+    or input.UserInputType == Enum.UserInputType.Touch then
 
-dragging = true
-dragStart = input.Position
-startPosition = Window.Position
-end
+        dragging = true
+        dragStart = input.Position
+        startPosition = Window.Position
+    end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
