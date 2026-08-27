@@ -87,6 +87,12 @@ PaddingRight = UDim.new(0, right or 0)
 }, parent)
 end
 
+local function SafeCallback(callback, ...)
+    if typeof(callback) == "function" then
+        return callback(...)
+    end
+end
+
 local ScreenGui = New("ScreenGui", {
 Name = "MaddiSON",
 ResetOnSpawn = false,
@@ -683,6 +689,8 @@ button.MouseButton1Click:Connect(function()
 if callback then callback() end
 end)
 
+SafeCallback(callback)
+
 return row
 end
 
@@ -729,6 +737,8 @@ BackgroundColor3 = enabled and Theme.Black or Theme.Muted
 
 if callback then callback(enabled) end
 end)
+
+SafeCallback(callback, enabled)
 
 return row
 end
@@ -797,6 +807,8 @@ valueLabel.Text = tostring(value)
 
 if callback then callback(value) end
 end
+
+SafeCallback(callback, value)
 
 track.InputBegan:Connect(function(input)
 if input.UserInputType == Enum.UserInputType.MouseButton1
@@ -937,6 +949,8 @@ end
 end)
 end
 
+SafeCallback(callback, selected)
+
 dropdown.MouseButton1Click:Connect(function()
 opened = not opened
 optionFrame.Visible = opened
@@ -996,6 +1010,8 @@ if callback then callback() end
 end
 end)
 
+SafeCallback(callback)
+
 return row
 end
 
@@ -1025,6 +1041,8 @@ Padding(box, 0, 0, 9, 9)
 box.FocusLost:Connect(function()
 if callback then callback(box.Text) end
 end)
+
+SafeCallback(callback, box.Text)
 
 return row
 end
