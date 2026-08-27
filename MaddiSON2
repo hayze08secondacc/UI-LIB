@@ -797,9 +797,14 @@ local function CreateDropdown(parent, title, description, options, default, call
     local selected = default or options[1]
     local opened = false
 
+    local closedHeight = 46
+    local optionHeight = 27
+    local optionPadding = 5
+    local openHeight = closedHeight + optionPadding + (#options * optionHeight)
+
     local dropdown = New("TextButton", {
         AnchorPoint = Vector2.new(1, 0.5),
-        Position = UDim2.new(1, -12, 0.5, 0),
+        Position = UDim2.new(1, -12, 0, 23),
         Size = UDim2.fromOffset(140, 28),
         BackgroundColor3 = Theme.Hover,
         BorderSizePixel = 0,
@@ -816,7 +821,7 @@ local function CreateDropdown(parent, title, description, options, default, call
 
     local optionFrame = New("Frame", {
         Position = UDim2.new(0, 0, 1, 5),
-        Size = UDim2.new(1, 0, 0, #options * 27),
+        Size = UDim2.new(1, 0, 0, #options * optionHeight),
         BackgroundColor3 = Theme.Surface,
         BorderSizePixel = 0,
         Visible = false,
@@ -832,7 +837,7 @@ local function CreateDropdown(parent, title, description, options, default, call
 
     for _, option in ipairs(options) do
         local optionButton = New("TextButton", {
-            Size = UDim2.new(1, 0, 0, 27),
+            Size = UDim2.new(1, 0, 0, optionHeight),
             BackgroundColor3 = Theme.Surface,
             BorderSizePixel = 0,
             Text = option,
@@ -860,16 +865,36 @@ local function CreateDropdown(parent, title, description, options, default, call
         optionButton.MouseButton1Click:Connect(function()
             selected = option
             dropdown.Text = selected .. "   ▾"
+
             opened = false
             optionFrame.Visible = false
 
-            if callback then callback(selected) end
+            Tween(row, 0.2, {
+                Size = UDim2.new(1, 0, 0, closedHeight)
+            })
+
+            if callback then
+                callback(selected)
+            end
         end)
     end
 
     dropdown.MouseButton1Click:Connect(function()
         opened = not opened
-        optionFrame.Visible = opened
+
+        if opened then
+            optionFrame.Visible = true
+
+            Tween(row, 0.25, {
+                Size = UDim2.new(1, 0, 0, openHeight)
+            })
+        else
+            optionFrame.Visible = false
+
+            Tween(row, 0.25, {
+                Size = UDim2.new(1, 0, 0, closedHeight)
+            })
+        end
     end)
 
     return row
