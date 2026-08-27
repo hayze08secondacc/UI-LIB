@@ -212,17 +212,6 @@ local Brand = New("ImageLabel", {
 
 Corner(Brand, 7)
 
-local BrandInner = New("Frame", {
-AnchorPoint = Vector2.new(0.5, 0.5),
-Position = UDim2.fromScale(0.5, 0.5),
-Size = UDim2.fromOffset(10, 10),
-BackgroundColor3 = Theme.Black,
-BorderSizePixel = 0,
-ZIndex = 33
-}, Brand)
-
-Corner(BrandInner, 3)
-
 New("TextLabel", {
 Position = UDim2.fromOffset(58, 15),
 Size = UDim2.fromOffset(240, 24),
