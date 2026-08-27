@@ -135,19 +135,41 @@ ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 20, 20))
 Rotation = 35
 }, WindowBackdrop)
 
-local Grid = New("Frame", {
-    Name = "InnerGeometricGrid",
-    Position = UDim2.fromScale(0, 0),
+local GridClip = New("CanvasGroup", {
+    Name = "GridClip",
     Size = UDim2.fromScale(1, 1),
+    Position = UDim2.fromScale(0, 0),
     BackgroundTransparency = 1,
-    ClipsDescendants = true,
+    BorderSizePixel = 0,
+    GroupTransparency = 0,
     ZIndex = 12
 }, WindowBackdrop)
 
-for i = 1, 18 do
-    New("Frame", {
+Corner(GridClip, 14)
+
+local Grid = New("Frame", {
+    Name = "InnerGeometricGrid",
+    Size = UDim2.fromScale(1, 1),
+    Position = UDim2.fromScale(0, 0),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ClipsDescendants = false,
+    ZIndex = 12
+}, GridClip)
+
+local verticalLines = {}
+local horizontalLines = {}
+
+local lineCount = 18
+local spacing = 1 / lineCount
+
+for i = 0, lineCount - 1 do
+    local x = i * spacing
+    local y = i * spacing
+
+    local vertical = New("Frame", {
         Size = UDim2.new(0, 1, 1, 0),
-        Position = UDim2.new(i / 18, 0, 0, 0),
+        Position = UDim2.new(x, 0, 0, 0),
         Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
@@ -155,15 +177,38 @@ for i = 1, 18 do
         ZIndex = 12
     }, Grid)
 
-    New("Frame", {
+    local verticalClone = New("Frame", {
+        Size = vertical.Size,
+        Position = UDim2.new(x + 1, 0, 0, 0),
+        Rotation = vertical.Rotation,
+        BackgroundColor3 = Theme.White,
+        BackgroundTransparency = vertical.BackgroundTransparency,
+        BorderSizePixel = 0,
+        ZIndex = 12
+    }, Grid)
+
+    local horizontal = New("Frame", {
         Size = UDim2.new(1, 0, 0, 1),
-        Position = UDim2.new(0, 0, i / 18, 0),
+        Position = UDim2.new(0, 0, y, 0),
         Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
         BorderSizePixel = 0,
         ZIndex = 12
     }, Grid)
+
+    local horizontalClone = New("Frame", {
+        Size = horizontal.Size,
+        Position = UDim2.new(0, 0, y + 1, 0),
+        Rotation = horizontal.Rotation,
+        BackgroundColor3 = Theme.White,
+        BackgroundTransparency = horizontal.BackgroundTransparency,
+        BorderSizePixel = 0,
+        ZIndex = 12
+    }, Grid)
+
+    table.insert(verticalLines, {main = vertical, clone = verticalClone})
+    table.insert(horizontalLines, {main = horizontal, clone = horizontalClone})
 end
 
 local Header = New("Frame", {
@@ -1164,19 +1209,44 @@ end
 end
 end)
 
-local drift = 0
+local driftX = 0
+local driftY = 0
 
 RunService.RenderStepped:Connect(function(deltaTime)
-    drift = drift + deltaTime
+    driftX = driftX + deltaTime * 0.25
+    driftY = driftY + deltaTime * 0.18
 
-    Grid.Position = UDim2.new(
-        0,
-        math.sin(drift * 0.25) * 3,
-        0,
-        math.cos(drift * 0.18) * 2
-    )
+    driftX = driftX % spacing
+    driftY = driftY % spacing
+
+    for _, pair in ipairs(verticalLines) do
+        local main = pair.main
+        local clone = pair.clone
+
+        local x = main.Position.X.Scale - driftX
+
+        if x < -spacing then
+            x = x + 1 + spacing
+        end
+
+        main.Position = UDim2.new(x, 0, 0, 0)
+        clone.Position = UDim2.new(x + 1, 0, 0, 0)
+    end
+
+    for _, pair in ipairs(horizontalLines) do
+        local main = pair.main
+        local clone = pair.clone
+
+        local y = main.Position.Y.Scale - driftY
+
+        if y < -spacing then
+            y = y + 1 + spacing
+        end
+
+        main.Position = UDim2.new(0, 0, y, 0)
+        clone.Position = UDim2.new(0, 0, y + 1, 0)
+    end
 end)
-
 Tween(Window, 0.6, {
 Position = UDim2.fromScale(0.5, 0.5)
 }, Enum.EasingStyle.Back)
