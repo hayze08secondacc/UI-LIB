@@ -545,7 +545,9 @@ Character = "rbxassetid://93915156103067",
 Shield = "rbxassetid://98159911363596",
 Crosshair = "rbxassetid://114537233921022",
 Eye = "rbxassetid://6523858394",
-Activity = "rbxassetid://105011543514204"
+Activity = "rbxassetid://105011543514204",
+Monitor = "rbxassetid://120274788136096",
+Star = "rbxassetid://6218681666"
 }
 
 local function ResolveIcon(icon)
