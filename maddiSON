@@ -832,133 +832,133 @@ return row
 end
 
 local function CreateDropdown(parent, title, description, options, default, callback)
-options = options or {}
+    options = options or {}
 
-local row = CreateRow(parent, title, description)
-local selected = default or options[1]
-local opened = false
+    local row = CreateRow(parent, title, description)
+    local selected = default or options[1]
+    local opened = false
 
-local closedHeight = 46
-local dropdownHeight = 28
-local optionHeight = 27
-local spacing = 5
-local dropdownWidth = 140
-local menuPadding = 6
+    local closedHeight = 46
+    local dropdownHeight = 28
+    local optionHeight = 27
+    local spacing = 5
+    local dropdownWidth = 140
+    local menuPadding = 6
 
-local optionsHeight = math.max(#options * optionHeight, optionHeight)
-local openHeight = closedHeight + spacing + optionsHeight + menuPadding
+    local optionsHeight = math.max(#options * optionHeight, optionHeight)
+    local openHeight = closedHeight + spacing + optionsHeight + menuPadding
 
-row.ClipsDescendants = true
+    row.ClipsDescendants = true
 
-local dropdown = New("TextButton", {
-AnchorPoint = Vector2.new(1, 0),
-Position = UDim2.new(1, -12, 0, 9),
-Size = UDim2.fromOffset(dropdownWidth, dropdownHeight),
-BackgroundColor3 = Theme.Hover,
-BorderSizePixel = 0,
-Text = tostring(selected or "Select") .. " ▾",
-Font = Enum.Font.GothamSemibold,
-TextSize = 9,
-TextColor3 = Theme.Text,
-AutoButtonColor = false,
-ZIndex = 100
-}, row)
+    local dropdown = New("TextButton", {
+        AnchorPoint = Vector2.new(1, 0),
+        Position = UDim2.new(1, -12, 0, 9),
+        Size = UDim2.fromOffset(dropdownWidth, dropdownHeight),
+        BackgroundColor3 = Theme.Hover,
+        BorderSizePixel = 0,
+        Text = tostring(selected or "Select") .. " ▾",
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 9,
+        TextColor3 = Theme.Text,
+        AutoButtonColor = false,
+        ZIndex = 100
+    }, row)
 
-Corner(dropdown, 7)
-Stroke(dropdown, Theme.Border, 1, 0.15)
+    Corner(dropdown, 7)
+    Stroke(dropdown, Theme.Border, 1, 0.15)
 
-local optionFrame = New("Frame", {
-AnchorPoint = Vector2.new(1, 0),
-Position = UDim2.new(1, -12, 0, closedHeight + spacing),
-Size = UDim2.fromOffset(
-dropdownWidth,
-optionsHeight + menuPadding
-),
-BackgroundColor3 = Theme.Surface,
-BorderSizePixel = 0,
-Visible = false,
-ClipsDescendants = true,
-ZIndex = 101
-}, row)
+    local optionFrame = New("Frame", {
+        AnchorPoint = Vector2.new(1, 0),
+        Position = UDim2.new(1, -12, 0, closedHeight + spacing),
+        Size = UDim2.fromOffset(
+            dropdownWidth,
+            optionsHeight + menuPadding
+        ),
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        Visible = false,
+        ClipsDescendants = true,
+        ZIndex = 101
+    }, row)
 
-Corner(optionFrame, 7)
-Stroke(optionFrame, Theme.Border, 1, 0.1)
+    Corner(optionFrame, 7)
+    Stroke(optionFrame, Theme.Border, 1, 0.1)
 
-New("UIPadding", {
-PaddingTop = UDim.new(0, 3),
-PaddingBottom = UDim.new(0, 3),
-PaddingLeft = UDim.new(0, 3),
-PaddingRight = UDim.new(0, 3)
-}, optionFrame)
+    New("UIPadding", {
+        PaddingTop = UDim.new(0, 3),
+        PaddingBottom = UDim.new(0, 3),
+        PaddingLeft = UDim.new(0, 3),
+        PaddingRight = UDim.new(0, 3)
+    }, optionFrame)
 
-New("UIListLayout", {
-Padding = UDim.new(0, 2),
-SortOrder = Enum.SortOrder.LayoutOrder
-}, optionFrame)
+    New("UIListLayout", {
+        Padding = UDim.new(0, 2),
+        SortOrder = Enum.SortOrder.LayoutOrder
+    }, optionFrame)
 
-for index, option in ipairs(options) do
-local optionButton = New("TextButton", {
-LayoutOrder = index,
-Size = UDim2.new(1, 0, 0, optionHeight - 2),
-BackgroundColor3 = Theme.Surface,
-BorderSizePixel = 0,
-Text = tostring(option),
-Font = Enum.Font.Gotham,
-TextSize = 9,
-TextColor3 = Theme.SoftText,
-AutoButtonColor = false,
-ZIndex = 102
-}, optionFrame)
+    for index, option in ipairs(options) do
+        local optionButton = New("TextButton", {
+            LayoutOrder = index,
+            Size = UDim2.new(1, 0, 0, optionHeight - 2),
+            BackgroundColor3 = Theme.Surface,
+            BorderSizePixel = 0,
+            Text = tostring(option),
+            Font = Enum.Font.Gotham,
+            TextSize = 9,
+            TextColor3 = Theme.SoftText,
+            AutoButtonColor = false,
+            ZIndex = 102
+        }, optionFrame)
 
-Corner(optionButton, 5)
+        Corner(optionButton, 5)
 
-optionButton.MouseEnter:Connect(function()
-Tween(optionButton, 0.15, {
-BackgroundColor3 = Theme.Hover,
-TextColor3 = Theme.Text
-})
-end)
+        optionButton.MouseEnter:Connect(function()
+            Tween(optionButton, 0.15, {
+                BackgroundColor3 = Theme.Hover,
+                TextColor3 = Theme.Text
+            })
+        end)
 
-optionButton.MouseLeave:Connect(function()
-Tween(optionButton, 0.15, {
-BackgroundColor3 = Theme.Surface,
-TextColor3 = Theme.SoftText
-})
-end)
+        optionButton.MouseLeave:Connect(function()
+            Tween(optionButton, 0.15, {
+                BackgroundColor3 = Theme.Surface,
+                TextColor3 = Theme.SoftText
+            })
+        end)
 
-optionButton.MouseButton1Click:Connect(function()
-selected = option
-dropdown.Text = tostring(selected) .. " ▾"
+        optionButton.MouseButton1Click:Connect(function()
+            selected = option
+            dropdown.Text = tostring(selected) .. " ▾"
 
-opened = false
-optionFrame.Visible = false
+            opened = false
+            optionFrame.Visible = false
 
-Tween(row, 0.2, {
-Size = UDim2.new(1, 0, 0, closedHeight)
-})
+            Tween(row, 0.2, {
+                Size = UDim2.new(1, 0, 0, closedHeight)
+            })
 
-SafeCallback(callback, selected)
-end)
-end
+            SafeCallback(callback, selected)
+        end)
+    end
 
-dropdown.MouseButton1Click:Connect(function()
-opened = not opened
-optionFrame.Visible = opened
+    dropdown.MouseButton1Click:Connect(function()
+        opened = not opened
+        optionFrame.Visible = opened
 
-Tween(row, 0.2, {
-Size = UDim2.new(
-1,
-0,
-0,
-opened and openHeight or closedHeight
-)
-})
+        Tween(row, 0.2, {
+            Size = UDim2.new(
+                1,
+                0,
+                0,
+                opened and openHeight or closedHeight
+            )
+        })
 
-dropdown.Text = tostring(selected or "Select") ..
-(opened and " ▴" or " ▾")
-end)
+        dropdown.Text = tostring(selected or "Select") ..
+            (opened and " ▴" or " ▾")
+    end)
 
-return row
+    return row
 end
 
 local function CreateKeybind(parent, title, description, defaultKey, callback)
