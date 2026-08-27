@@ -145,15 +145,19 @@ local Grid = New("Frame", {
     ZIndex = 12
 }, WindowBackdrop)
 
-for i = 1, 18 do
-    local x = (i - 0.5) / 18
-    local y = (i - 0.5) / 18
+local lineCount = 18
+local angle = 16
+local lineLength = math.cos(math.rad(angle)) - math.sin(math.rad(angle))
+
+for i = 1, lineCount do
+    local x = (i - 0.5) / lineCount
+    local y = (i - 0.5) / lineCount
 
     New("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Size = UDim2.new(0, 1, 1, 0),
+        Size = UDim2.new(0, 1, lineLength, 0),
         Position = UDim2.new(x, 0, 0.5, 0),
-        Rotation = 16,
+        Rotation = angle,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
         BorderSizePixel = 0,
@@ -162,9 +166,9 @@ for i = 1, 18 do
 
     New("Frame", {
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Size = UDim2.new(1, 0, 0, 1),
+        Size = UDim2.new(lineLength, 0, 0, 1),
         Position = UDim2.new(0.5, 0, y, 0),
-        Rotation = -16,
+        Rotation = -angle,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
         BorderSizePixel = 0,
