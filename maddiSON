@@ -1137,24 +1137,6 @@ HorizontalAlignment = Enum.HorizontalAlignment.Right,
 VerticalAlignment = Enum.VerticalAlignment.Bottom
 }, NotificationHolder)
 
-local function Notify(title, message, kind)
-local accent = Theme.White
-
-if kind == "success" then
-accent = Theme.Success
-elseif kind == "error" then
-accent = Theme.Danger
-end
-
-local notification = New("Frame", {
-Size = UDim2.fromOffset(290, 70),
-BackgroundColor3 = Theme.Surface,
-BorderSizePixel = 0,
-ZIndex = 101
-}, NotificationHolder)
-
-Corner(notification, 10)
-Stroke(notification, Theme.Border, 1, 0.1)
 
 local bar = New("Frame", {
 Position = UDim2.fromOffset(0, 12),
