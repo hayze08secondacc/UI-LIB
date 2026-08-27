@@ -183,8 +183,6 @@ local Header = New("Frame", {
 
 Corner(Header, 14)
 
-Corner(Header, 14)
-
 New("Frame", {
 Position = UDim2.new(0, 0, 1, -14),
 Size = UDim2.new(1, 0, 0, 14),
@@ -379,21 +377,9 @@ TextXAlignment = Enum.TextXAlignment.Left,
 ZIndex = 33
 }, Content)
 
-local PageSubtitle = New("TextLabel", {
-Position = UDim2.fromOffset(27, 48),
-Size = UDim2.new(1, -53, 0, 17),
-BackgroundTransparency = 1,
-Text = "A focused control surface for MaddiSON.",
-Font = Enum.Font.Gotham,
-TextSize = 10,
-TextColor3 = Theme.Muted,
-TextXAlignment = Enum.TextXAlignment.Left,
-ZIndex = 33
-}, Content)
-
 local PageContainer = New("ScrollingFrame", {
-Position = UDim2.fromOffset(26, 83),
-Size = UDim2.new(1, -52, 1, -101),
+Position = UDim2.fromOffset(26, 57),
+Size = UDim2.new(1, -52, 1, -75),
 BackgroundTransparency = 1,
 BorderSizePixel = 0,
 ScrollBarThickness = 2,
@@ -1189,6 +1175,88 @@ function WindowObject:CreateTab(data)
     local button = CreateCategory(name, icon)
 
     local TabObject = {}
+
+function TabObject:CreateSection(title, description)
+    local holder = CreateSection(page, title, description)
+
+    local SectionObject = {}
+
+    function SectionObject:CreateButton(config)
+        config = config or {}
+
+        return CreateButton(
+            holder,
+            config.Name or "Button",
+            config.Description or "",
+            config.Callback
+        )
+    end
+
+    function SectionObject:CreateToggle(config)
+        config = config or {}
+
+        return CreateToggle(
+            holder,
+            config.Name or "Toggle",
+            config.Description or "",
+            config.Default == true,
+            config.Callback
+        )
+    end
+
+    function SectionObject:CreateSlider(config)
+        config = config or {}
+
+        return CreateSlider(
+            holder,
+            config.Name or "Slider",
+            config.Description or "",
+            config.Minimum or 0,
+            config.Maximum or 100,
+            config.Default or 0,
+            config.Callback
+        )
+    end
+
+    function SectionObject:CreateDropdown(config)
+        config = config or {}
+
+        return CreateDropdown(
+            holder,
+            config.Name or "Dropdown",
+            config.Description or "",
+            config.Options or {},
+            config.Default,
+            config.Callback
+        )
+    end
+
+    function SectionObject:CreateKeybind(config)
+        config = config or {}
+
+        return CreateKeybind(
+            holder,
+            config.Name or "Keybind",
+            config.Description or "",
+            config.Default,
+            config.Callback
+        )
+    end
+
+    function SectionObject:CreateTextbox(config)
+        config = config or {}
+
+        return CreateTextbox(
+            holder,
+            config.Name or "Textbox",
+            config.Description or "",
+            config.Placeholder,
+            config.Callback
+        )
+    end
+
+    return SectionObject
+end
 
     function TabObject:CreateButton(config)
         config = config or {}
