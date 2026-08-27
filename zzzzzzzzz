@@ -449,7 +449,8 @@ local function ResolveIcon(icon)
 end
 
 local function CreateCategory(name, icon)
-        local button = New("TextButton", {
+       local function CreateCategory(name, icon)
+    local button = New("TextButton", {
         Name = name,
         Size = UDim2.new(1, 0, 0, 38),
         BackgroundColor3 = Theme.Element,
@@ -464,11 +465,6 @@ local function CreateCategory(name, icon)
     }, Navigation)
 
     CategoryButtons[name] = button
-for _, child in ipairs(button:GetChildren()) do
-    if child:IsA("TextLabel") and child.Name == "Label" then
-        child:Destroy()
-    end
-end
     Corner(button, 8)
 
     local iconId = ResolveIcon(icon)
@@ -487,22 +483,19 @@ end
     end
 
     local indicator = New("Frame", {
-    Name = "Indicator",
-    Position = UDim2.fromOffset(0, 9),
-    Size = UDim2.fromOffset(3, 20),
-    BackgroundColor3 = Theme.Black,
-    BackgroundTransparency = 1,
-    BorderSizePixel = 0,
-    ZIndex = 35
-}, button)
+        Name = "Indicator",
+        Position = UDim2.fromOffset(0, 9),
+        Size = UDim2.fromOffset(3, 20),
+        BackgroundColor3 = Theme.Black,
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ZIndex = 35
+    }, button)
 
     button.MouseEnter:Connect(function()
         if CurrentPageName ~= name then
             Tween(button, 0.15, {
-                BackgroundColor3 = Theme.Hover
-            })
-
-            Tween(label, 0.15, {
+                BackgroundColor3 = Theme.Hover,
                 TextColor3 = Theme.Text
             })
         end
@@ -511,51 +504,38 @@ end
     button.MouseLeave:Connect(function()
         if CurrentPageName ~= name then
             Tween(button, 0.15, {
-                BackgroundColor3 = Theme.Element
-            })
-
-            Tween(label, 0.15, {
+                BackgroundColor3 = Theme.Element,
                 TextColor3 = Theme.SoftText
             })
         end
     end)
 
     button.MouseButton1Click:Connect(function()
-    local clickedName = button.Name
+        local clickedName = button.Name
 
-    for pageName, page in pairs(Pages) do
-        page.Visible = pageName == clickedName
-    end
+        for pageName, page in pairs(Pages) do
+            page.Visible = pageName == clickedName
+        end
 
-    for buttonName, otherButton in pairs(CategoryButtons) do
-        local active = otherButton.Name == clickedName
-        local otherLabel = otherButton:FindFirstChild("Label")
-        local otherIndicator = otherButton:FindFirstChild("Indicator")
+        for _, otherButton in pairs(CategoryButtons) do
+            local active = otherButton.Name == clickedName
+            local otherIndicator = otherButton:FindFirstChild("Indicator")
 
-        Tween(otherButton, 0.18, {
-            BackgroundColor3 = active and Theme.White or Theme.Element
-        })
-
-        if otherLabel then
-            Tween(otherLabel, 0.18, {
-                TextColor3 = active and Theme.Black or Theme.SoftText
-            })
-        else
             Tween(otherButton, 0.18, {
+                BackgroundColor3 = active and Theme.White or Theme.Element,
                 TextColor3 = active and Theme.Black or Theme.SoftText
             })
+
+            if otherIndicator then
+                Tween(otherIndicator, 0.18, {
+                    BackgroundTransparency = active and 0 or 1
+                })
+            end
         end
 
-        if otherIndicator then
-            Tween(otherIndicator, 0.18, {
-                BackgroundTransparency = active and 0 or 1
-            })
-        end
-    end
-
-    PageTitle.Text = button.Name
-    CurrentPageName = button.Name
-end)
+        PageTitle.Text = clickedName
+        CurrentPageName = clickedName
+    end)
 
     return button
 end
