@@ -137,25 +137,33 @@ Rotation = 35
 
 local Grid = New("Frame", {
     Name = "InnerGeometricGrid",
-    AnchorPoint = Vector2.new(0.5, 0.5),
-    Position = UDim2.fromScale(0.5, 0.5),
-    Size = UDim2.new(0.70, 0, 0.70, 0),
+    Position = UDim2.fromOffset(0, 0),
+    Size = UDim2.fromOffset(0, 0),
+    AutomaticSize = Enum.AutomaticSize.None,
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     ClipsDescendants = true,
-    Rotation = 16,
     ZIndex = 12
 }, WindowBackdrop)
 
-local lineCount = 18
-local angle = 16
-local lineLength = math.cos(math.rad(angle)) - math.sin(math.rad(angle))
+local function syncGridSize()
+    Grid.Size = UDim2.fromOffset(
+        WindowBackdrop.AbsoluteSize.X,
+        WindowBackdrop.AbsoluteSize.Y
+    )
+end
+
+WindowBackdrop:GetPropertyChangedSignal("AbsoluteSize"):Connect(syncGridSize)
+task.defer(syncGridSize)
 
 for i = 1, 18 do
+    local x = i / 18
+
     New("Frame", {
-        Size = UDim2.new(0, 1, 1, 0),
-        Position = UDim2.new(i / 18, 0, 0, 0),
-        Rotation = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(x, 0, 0.5, 0),
+        Size = UDim2.new(0, 1, 0.68, 0),
+        Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
         BorderSizePixel = 0,
@@ -163,9 +171,10 @@ for i = 1, 18 do
     }, Grid)
 
     New("Frame", {
-        Size = UDim2.new(1, 0, 0, 1),
-        Position = UDim2.new(0, 0, i / 18, 0),
-        Rotation = 0,
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, x, 0),
+        Size = UDim2.new(0.68, 0, 0, 1),
+        Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
         BorderSizePixel = 0,
