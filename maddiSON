@@ -773,6 +773,46 @@ ZIndex = 38
 return row
 end
 
+local function CreateLabel(parent, title, description, defaultText, callback)
+    local row = CreateRow(parent, title, description)
+
+    local label = New("TextLabel", {
+        AnchorPoint = Vector2.new(1, 0.5),
+        Position = UDim2.new(1, -12, 0.5, 0),
+        Size = UDim2.fromOffset(180, 28),
+        BackgroundColor3 = Theme.Hover,
+        BorderSizePixel = 0,
+        Text = tostring(defaultText or ""),
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 9,
+        TextColor3 = Theme.Text,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        TextYAlignment = Enum.TextYAlignment.Center,
+        TextWrapped = true,
+        ZIndex = 39
+    }, row)
+
+    Corner(label, 7)
+    Stroke(label, Theme.Border, 1, 0.15)
+
+    local LabelObject = {}
+
+    function LabelObject:SetText(newText)
+        label.Text = tostring(newText or "")
+        SafeCallback(callback, label.Text)
+    end
+
+    function LabelObject:GetText()
+        return label.Text
+    end
+
+    function LabelObject:GetInstance()
+        return label
+    end
+
+    return LabelObject
+end
+
 local function CreateButton(parent, title, description, callback)
 local row = CreateRow(parent, title, description)
 
@@ -1270,6 +1310,18 @@ function TabObject:CreateSection(title, description)
 local holder = CreateSection(page, title, description)
 
 local SectionObject = {}
+
+function SectionObject:CreateLabel(config)
+    config = config or {}
+
+    return CreateLabel(
+        holder,
+        config.Name or "Label",
+        config.Description or "",
+        config.Text or "",
+        config.Callback
+    )
+end
 
 function SectionObject:CreateButton(config)
 config = config or {}
