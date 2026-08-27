@@ -152,16 +152,25 @@ local Grid = New("Frame", {
     Position = UDim2.fromScale(0, 0),
     Size = UDim2.fromScale(1, 1),
     BackgroundTransparency = 1,
-    ClipsDescendants = true,
     BorderSizePixel = 0,
+    ClipsDescendants = true,
     ZIndex = 12
 }, WindowBackdrop)
 
-for i = 1, 18 do
+local lineCount = 18
+
+-- Length needed to fit a rotated line inside a square.
+-- 0.92 gives a small safety margin.
+local lineLength = 0.92
+
+for i = 1, lineCount do
+    local x = (i - 0.5) / lineCount
+    local y = (i - 0.5) / lineCount
+
     New("Frame", {
-        Size = UDim2.new(0, 1, 0.92, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(i / 18, 0, 0.5, 0),
+        Position = UDim2.new(x, 0, 0.5, 0),
+        Size = UDim2.new(0, 1, lineLength, 0),
         Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
@@ -170,9 +179,9 @@ for i = 1, 18 do
     }, Grid)
 
     New("Frame", {
-        Size = UDim2.new(0.92, 0, 0, 1),
         AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(0.5, 0, i / 18, 0),
+        Position = UDim2.new(0.5, 0, y, 0),
+        Size = UDim2.new(lineLength, 0, 0, 1),
         Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
