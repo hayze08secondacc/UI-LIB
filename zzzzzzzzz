@@ -161,19 +161,13 @@ local verticalLines = {}
 local horizontalLines = {}
 
 local lineCount = 18
-local spacing = 1 / lineCount
-local driftX = 0
-local driftY = 0
 
-for i = 0, lineCount - 1 do
-    local x = i * spacing
-    local y = i * spacing
-
+for i = 1, lineCount do
     New("Frame", {
-        Name = "VerticalLine",
-        Size = UDim2.new(0, 1, 1, 0),
-        Position = UDim2.new(x, 0, 0, 0),
-        Rotation = 0,
+        Size = UDim2.new(0, 1, 0.94, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(i / lineCount, 0, 0.5, 0),
+        Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
         BorderSizePixel = 0,
@@ -181,10 +175,10 @@ for i = 0, lineCount - 1 do
     }, Grid)
 
     New("Frame", {
-        Name = "HorizontalLine",
-        Size = UDim2.new(1, 0, 0, 1),
-        Position = UDim2.new(0, 0, y, 0),
-        Rotation = 0,
+        Size = UDim2.new(0.94, 0, 0, 1),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, 0, i / lineCount, 0),
+        Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
         BorderSizePixel = 0,
