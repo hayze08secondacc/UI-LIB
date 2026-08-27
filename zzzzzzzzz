@@ -199,12 +199,15 @@ BorderSizePixel = 0,
 ZIndex = 31
 }, Header)
 
-local Brand = New("Frame", {
-Position = UDim2.fromOffset(22, 22),
-Size = UDim2.fromOffset(24, 24),
-BackgroundColor3 = Theme.White,
-BorderSizePixel = 0,
-ZIndex = 32
+local Brand = New("ImageLabel", {
+    Name = "Brand",
+    Position = UDim2.fromOffset(22, 22),
+    Size = UDim2.fromOffset(24, 24),
+    BackgroundTransparency = 1,
+    Image = "rbxassetid://11818612368",
+    ScaleType = Enum.ScaleType.Fit,
+    ImageColor3 = Theme.White,
+    ZIndex = 32
 }, Header)
 
 Corner(Brand, 7)
