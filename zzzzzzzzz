@@ -162,53 +162,34 @@ local horizontalLines = {}
 
 local lineCount = 18
 local spacing = 1 / lineCount
+local driftX = 0
+local driftY = 0
 
 for i = 0, lineCount - 1 do
     local x = i * spacing
     local y = i * spacing
 
-    local vertical = New("Frame", {
+    New("Frame", {
+        Name = "VerticalLine",
         Size = UDim2.new(0, 1, 1, 0),
         Position = UDim2.new(x, 0, 0, 0),
-        Rotation = 16,
+        Rotation = 0,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
         BorderSizePixel = 0,
         ZIndex = 12
     }, Grid)
 
-    local verticalClone = New("Frame", {
-        Size = vertical.Size,
-        Position = UDim2.new(x + 1, 0, 0, 0),
-        Rotation = vertical.Rotation,
-        BackgroundColor3 = Theme.White,
-        BackgroundTransparency = vertical.BackgroundTransparency,
-        BorderSizePixel = 0,
-        ZIndex = 12
-    }, Grid)
-
-    local horizontal = New("Frame", {
+    New("Frame", {
+        Name = "HorizontalLine",
         Size = UDim2.new(1, 0, 0, 1),
         Position = UDim2.new(0, 0, y, 0),
-        Rotation = -16,
+        Rotation = 0,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
         BorderSizePixel = 0,
         ZIndex = 12
     }, Grid)
-
-    local horizontalClone = New("Frame", {
-        Size = horizontal.Size,
-        Position = UDim2.new(0, 0, y + 1, 0),
-        Rotation = horizontal.Rotation,
-        BackgroundColor3 = Theme.White,
-        BackgroundTransparency = horizontal.BackgroundTransparency,
-        BorderSizePixel = 0,
-        ZIndex = 12
-    }, Grid)
-
-    table.insert(verticalLines, {main = vertical, clone = verticalClone})
-    table.insert(horizontalLines, {main = horizontal, clone = horizontalClone})
 end
 
 local Header = New("Frame", {
@@ -1209,44 +1190,32 @@ end
 end
 end)
 
-local driftX = 0
-local driftY = 0
-
 RunService.RenderStepped:Connect(function(deltaTime)
-    driftX = driftX + deltaTime * 0.25
-    driftY = driftY + deltaTime * 0.18
+    driftX = (driftX + deltaTime * 0.01) % spacing
+    driftY = (driftY + deltaTime * 0.008) % spacing
 
-    driftX = driftX % spacing
-    driftY = driftY % spacing
-
-    for _, pair in ipairs(verticalLines) do
-        local main = pair.main
-        local clone = pair.clone
-
-        local x = main.Position.X.Scale - driftX
-
-        if x < -spacing then
-            x = x + 1 + spacing
+    for _, line in ipairs(Grid:GetChildren()) do
+        if line:IsA("Frame") then
+            if line.Name == "VerticalLine" then
+                local originalIndex = line.LayoutOrder
+            end
         end
-
-        main.Position = UDim2.new(x, 0, 0, 0)
-        clone.Position = UDim2.new(x + 1, 0, 0, 0)
     end
 
-    for _, pair in ipairs(horizontalLines) do
-        local main = pair.main
-        local clone = pair.clone
+    for i, line in ipairs(Grid:GetChildren()) do
+        if line:IsA("Frame") then
+            if line.Name == "VerticalLine" then
+                local x = ((i - 1) * spacing - driftX) % 1
+                line.Position = UDim2.new(x, 0, 0, 0)
 
-        local y = main.Position.Y.Scale - driftY
-
-        if y < -spacing then
-            y = y + 1 + spacing
+            elseif line.Name == "HorizontalLine" then
+                local y = ((i - 1) * spacing - driftY) % 1
+                line.Position = UDim2.new(0, 0, y, 0)
+            end
         end
-
-        main.Position = UDim2.new(0, 0, y, 0)
-        clone.Position = UDim2.new(0, 0, y + 1, 0)
     end
 end)
+
 Tween(Window, 0.6, {
 Position = UDim2.fromScale(0.5, 0.5)
 }, Enum.EasingStyle.Back)
