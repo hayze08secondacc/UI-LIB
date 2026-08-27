@@ -1318,6 +1318,10 @@ end
 -- Set the title immediately when the first tab is created.
 if CurrentPageName == name then
     PageTitle.Text = name
+local buttonPadding = New("UIPadding", {
+    PaddingLeft = UDim.new(0, icon and 42 or 12),
+    PaddingRight = UDim.new(0, 10)
+}, button)
 end
 
     return TabObject
