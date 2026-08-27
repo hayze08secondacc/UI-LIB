@@ -833,13 +833,14 @@ local function CreateDropdown(parent, title, description, options, default, call
     options = options or {}
 
     local row = CreateRow(parent, title, description)
+    row.ClipsDescendants = false
+
     local selected = default or options[1]
     local opened = false
 
     local closedHeight = 46
     local optionHeight = 27
     local spacing = 5
-    local openHeight = closedHeight + spacing + (#options * optionHeight)
 
     local dropdown = New("TextButton", {
         AnchorPoint = Vector2.new(1, 0),
@@ -852,30 +853,34 @@ local function CreateDropdown(parent, title, description, options, default, call
         TextSize = 9,
         TextColor3 = Theme.Text,
         AutoButtonColor = false,
-        ZIndex = 45
+        ZIndex = 100
     }, row)
 
     Corner(dropdown, 7)
     Stroke(dropdown, Theme.Border, 1, 0.15)
 
-local optionFrame = New("Frame", {
-    Position = UDim2.new(0, 0, 1, 5),
-    Size = UDim2.new(1, 0, 0, #options * 27),
-    BackgroundColor3 = Theme.Surface,
-    BorderSizePixel = 0,
-    Visible = false,
-    ZIndex = 70
-}, dropdown)
+    local optionFrame = New("Frame", {
+        AnchorPoint = Vector2.new(1, 0),
+        Position = UDim2.new(1, -12, 0, closedHeight + spacing),
+        Size = UDim2.fromOffset(140, #options * optionHeight),
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        Visible = false,
+        ZIndex = 200
+    }, parent)
 
-Corner(optionFrame, 7)
-Stroke(optionFrame, Theme.Border, 1, 0.1)
+    optionFrame.ClipsDescendants = true
 
-New("UIListLayout", {
-    SortOrder = Enum.SortOrder.LayoutOrder
-}, optionFrame)
+    Corner(optionFrame, 7)
+    Stroke(optionFrame, Theme.Border, 1, 0.1)
 
-    for _, option in ipairs(options) do
+    New("UIListLayout", {
+        SortOrder = Enum.SortOrder.LayoutOrder
+    }, optionFrame)
+
+    for index, option in ipairs(options) do
         local optionButton = New("TextButton", {
+            LayoutOrder = index,
             Size = UDim2.new(1, 0, 0, optionHeight),
             BackgroundColor3 = Theme.Surface,
             BorderSizePixel = 0,
@@ -884,12 +889,27 @@ New("UIListLayout", {
             TextSize = 9,
             TextColor3 = Theme.SoftText,
             AutoButtonColor = false,
-            ZIndex = 71
+            ZIndex = 201
         }, optionFrame)
+
+        optionButton.MouseEnter:Connect(function()
+            Tween(optionButton, 0.15, {
+                BackgroundColor3 = Theme.Hover,
+                TextColor3 = Theme.Text
+            })
+        end)
+
+        optionButton.MouseLeave:Connect(function()
+            Tween(optionButton, 0.15, {
+                BackgroundColor3 = Theme.Surface,
+                TextColor3 = Theme.SoftText
+            })
+        end)
 
         optionButton.MouseButton1Click:Connect(function()
             selected = option
             dropdown.Text = tostring(selected) .. " ▾"
+
             opened = false
             optionFrame.Visible = false
 
@@ -905,16 +925,25 @@ New("UIListLayout", {
 
     dropdown.MouseButton1Click:Connect(function()
         opened = not opened
-        optionFrame.Visible = opened
 
-        Tween(row, 0.25, {
-            Size = UDim2.new(
-                1,
-                0,
-                0,
-                opened and openHeight or closedHeight
-            )
-        })
+        if opened then
+            optionFrame.Visible = true
+
+            Tween(row, 0.25, {
+                Size = UDim2.new(
+                    1,
+                    0,
+                    0,
+                    closedHeight + spacing + (#options * optionHeight)
+                )
+            })
+        else
+            optionFrame.Visible = false
+
+            Tween(row, 0.25, {
+                Size = UDim2.new(1, 0, 0, closedHeight)
+            })
+        end
     end)
 
     return row
