@@ -1323,7 +1323,12 @@ end
     if not CurrentPageName then
     page.Visible = true
     button.BackgroundColor3 = Theme.White
-    button.TextColor3 = Theme.Black
+
+    local label = button:FindFirstChild("Label")
+    if label then
+        label.TextColor3 = Theme.Black
+    end
+
     CurrentPageName = name
 
     local indicator = button:FindFirstChild("Indicator")
