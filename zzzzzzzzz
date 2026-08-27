@@ -236,7 +236,7 @@ New("TextLabel", {
 Position = UDim2.fromOffset(59, 39),
 Size = UDim2.fromOffset(250, 14),
 BackgroundTransparency = 1,
-Text = "MODULAR INTERFACE SYSTEM",
+Text = "v1.0 ui",
 Font = Enum.Font.GothamMedium,
 TextSize = 8,
 TextColor3 = Theme.Muted,
