@@ -135,8 +135,8 @@ Rotation = 35
 
 local Grid = New("Frame", {
     Name = "InnerGeometricGrid",
-    Position = UDim2.fromScale(0, 0),
-    Size = UDim2.fromScale(1, 1),
+    Position = UDim2.fromOffset(-90, -90),
+    Size = UDim2.new(1, 180, 1, 180),
     BackgroundTransparency = 1,
     ClipsDescendants = true,
     ZIndex = 12
@@ -1162,18 +1162,18 @@ end
 end
 end)
 
+--[[
 local drift = 0
 
 RunService.RenderStepped:Connect(function(deltaTime)
-    drift = drift + deltaTime
+    drift += deltaTime
 
-    Grid.Position = UDim2.new(
-        0,
-        math.sin(drift * 0.25) * 3,
-        0,
-        math.cos(drift * 0.18) * 2
+    Grid.Position = UDim2.fromOffset(
+        -90 + math.sin(drift * 0.25) * 3,
+        -90 + math.cos(drift * 0.18) * 2
     )
 end)
+--]]
 
 Tween(Window, 0.6, {
 Position = UDim2.fromScale(0.5, 0.5)
