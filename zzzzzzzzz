@@ -454,7 +454,7 @@ local function CreateCategory(name, icon)
         Size = UDim2.new(1, 0, 0, 38),
         BackgroundColor3 = Theme.Element,
         BorderSizePixel = 0,
-        Text = name,
+        Text = "",
         Font = Enum.Font.GothamSemibold,
         TextSize = 11,
         TextColor3 = Theme.SoftText,
