@@ -843,8 +843,9 @@ local function CreateDropdown(parent, title, description, options, default, call
     local optionHeight = 27
     local spacing = 5
     local dropdownWidth = 140
-    local optionsHeight = math.max(#options * optionHeight, optionHeight)
     local menuPadding = 6
+
+    local optionsHeight = math.max(#options * optionHeight, optionHeight)
     local openHeight = closedHeight + spacing + optionsHeight + menuPadding
 
     row.ClipsDescendants = true
@@ -869,7 +870,10 @@ local function CreateDropdown(parent, title, description, options, default, call
     local optionFrame = New("Frame", {
         AnchorPoint = Vector2.new(1, 0),
         Position = UDim2.new(1, -12, 0, closedHeight + spacing),
-        Size = UDim2.fromOffset(dropdownWidth, optionsHeight),
+        Size = UDim2.fromOffset(
+            dropdownWidth,
+            optionsHeight + menuPadding
+        ),
         BackgroundColor3 = Theme.Surface,
         BorderSizePixel = 0,
         Visible = false,
@@ -925,6 +929,7 @@ local function CreateDropdown(parent, title, description, options, default, call
         optionButton.MouseButton1Click:Connect(function()
             selected = option
             dropdown.Text = tostring(selected) .. " ▾"
+
             opened = false
             optionFrame.Visible = false
 
