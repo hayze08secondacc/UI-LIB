@@ -5,7 +5,7 @@ local RunService = game:GetService("RunService")
 local Lighting = game:GetService("Lighting")
 local Library = {}
 
---zzzzzzz
+-- by loczur2 on dc
 
 function Library:CreateWindow(options)
     options = options or {}
