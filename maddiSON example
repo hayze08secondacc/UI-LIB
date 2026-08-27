@@ -1,4 +1,4 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/hayze08secondacc/UI-LIB/refs/heads/main/maddiSON%20example"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/hayze08secondacc/UI-LIB/refs/heads/main/maddiSON"))()
 
 local Window = Library:CreateWindow({
     Title = "loczur2 Hub",
