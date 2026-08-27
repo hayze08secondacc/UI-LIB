@@ -1,71 +1,89 @@
-local Library = loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/hayze08secondacc/UI-LIB/refs/heads/main/maddiSON"
-))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/hayze08secondacc/UI-LIB/refs/heads/main/maddiSON%20example"))()
 
-local Window = Library:CreateWindow()
-
-local Main = Window:CreateTab({
-    Name = "Main",
-    Icon = "House"
+local Window = Library:CreateWindow({
+    Title = "loczur2 Hub",
+    Subtitle = "maddiSON"
 })
 
-local Section = Main:CreateSection(
-    "Player",
-    "Player settings."
+local Main = Window:CreateTab({
+    Name = "Main"
+})
+
+local HomeSection = Main:CreateSection(
+    "Home",
+    "Example controls"
 )
 
-Section:CreateButton({
-    Name = "Test",
-    Description = "Test button.",
+HomeSection:CreateLabel({
+    Name = "Disclaimer",
+    Description = "Usage notice",
+    Text = "not responsible for any bans"
+})
+
+HomeSection:CreateButton({
+    Name = "Show notification",
+    Description = "Displays a test notification.",
     Callback = function()
-        print("Clicked")
+        Window:Notify(
+            "Notice",
+            "Thanks for helping me",
+            "success"
+        )
     end
 })
 
-Section:CreateToggle({
-    Name = "Enable feature",
-    Description = "Turn the feature on or off.",
+HomeSection:CreateToggle({
+    Name = "Example toggle",
+    Description = "Demonstrates a toggle.",
     Default = false,
     Callback = function(enabled)
         print("Toggle state:", enabled)
     end
 })
 
-Section:CreateSlider({
-    Name = "Walk speed",
-    Description = "Change your movement speed.",
-    Minimum = 16,
+HomeSection:CreateSlider({
+    Name = "Example slider",
+    Description = "Demonstrates a slider.",
+    Minimum = 0,
     Maximum = 100,
-    Default = 16,
+    Default = 50,
     Callback = function(value)
         print("Slider value:", value)
     end
 })
 
-Section:CreateDropdown({
-    Name = "Choose theme",
-    Description = "Select the interface theme.",
-    Options = {"Dark", "Light", "Red"},
-    Default = "Dark",
+HomeSection:CreateDropdown({
+    Name = "Example dropdown",
+    Description = "Click to cycle through options.",
+    Options = {
+        "Option one",
+        "Option two",
+        "Option three"
+    },
+    Default = "Option one",
     Callback = function(selected)
-        print("Selected theme:", selected)
+        print("Selected:", selected)
     end
 })
 
-Section:CreateKeybind({
-    Name = "Test keybind",
-    Description = "Press a key to run the callback.",
-    Default = Enum.KeyCode.RightShift,
+HomeSection:CreateKeybind({
+    Name = "Notification key",
+    Description = "Press the selected key.",
+    Default = Enum.KeyCode.N,
     Callback = function()
-        print("Keybind pressed")
+        Window:Notify(
+            "Keybind",
+            "The keybind was pressed.",
+            "info"
+        )
     end
 })
 
-Section:CreateTextbox({
-    Name = "Player name",
-    Description = "Enter a player name.",
-    Placeholder = "Type a name...",
+HomeSection:CreateTextbox({
+    Name = "Name input",
+    Description = "Enter some text.",
+    Placeholder = "Type here...",
     Callback = function(text)
-        print("Textbox value:", text)
+        print("Textbox text:", text)
     end
 })
