@@ -449,21 +449,24 @@ local function ResolveIcon(icon)
 end
 
 local function CreateCategory(name, icon)
-local button = New("TextButton", {
-    Name = name,
-    Size = UDim2.new(1, 0, 0, 38),
-    BackgroundColor3 = Theme.Element,
-    BorderSizePixel = 0,
-    Text = name,
-    Font = Enum.Font.GothamSemibold,
-    TextSize = 11,
-    TextColor3 = Theme.SoftText,
-    TextXAlignment = Enum.TextXAlignment.Left,
-    AutoButtonColor = false,
-    ZIndex = 34
-}, Navigation)
+    local button = New("TextButton", {
+        Name = name,
+        Size = UDim2.new(1, 0, 0, 38),
+        BackgroundColor3 = Theme.Element,
+        BorderSizePixel = 0,
+        Text = name,
+        Font = Enum.Font.GothamSemibold,
+        TextSize = 11,
+        TextColor3 = Theme.SoftText,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        AutoButtonColor = false,
+        ZIndex = 34
+    }, Navigation)
 
-Corner(button, 8)
+    Padding(button, 0, 0, 42, 10)
+    CategoryButtons[name] = button
+
+    Corner(button, 8)
 
 local iconId = ResolveIcon(icon)
 
