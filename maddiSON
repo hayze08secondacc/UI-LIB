@@ -442,6 +442,8 @@ end
 return nil
 end
 
+
+
 local function CreateCategory(name, icon)
 local button = New("TextButton", {
 Name = name,
@@ -1025,6 +1027,107 @@ if callback then callback(box.Text) end
 end)
 
 return row
+end
+
+local function Notify(title, message, kind)
+    local accent = Theme.White
+
+    if kind == "success" then
+        accent = Theme.Success
+    elseif kind == "error" then
+        accent = Theme.Danger
+    end
+
+    local notification = New("Frame", {
+        Name = "Notification",
+        Size = UDim2.fromOffset(290, 70),
+        AnchorPoint = Vector2.new(1, 1),
+        Position = UDim2.new(1, -22, 1, 22),
+        BackgroundColor3 = Theme.Surface,
+        BorderSizePixel = 0,
+        ZIndex = 1000
+    }, ScreenGui)
+
+    Corner(notification, 10)
+    Stroke(notification, Theme.Border, 1, 0.1)
+
+    local accentBar = New("Frame", {
+        Position = UDim2.fromOffset(0, 12),
+        Size = UDim2.fromOffset(3, 46),
+        BackgroundColor3 = accent,
+        BorderSizePixel = 0,
+        ZIndex = 1001
+    }, notification)
+
+    Corner(accentBar, 3)
+
+    local titleLabel = New("TextLabel", {
+        Position = UDim2.fromOffset(17, 11),
+        Size = UDim2.new(1, -30, 0, 18),
+        BackgroundTransparency = 1,
+        Text = tostring(title or "Notification"),
+        Font = Enum.Font.GothamBold,
+        TextSize = 11,
+        TextColor3 = Theme.Text,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 1001
+    }, notification)
+
+    local messageLabel = New("TextLabel", {
+        Position = UDim2.fromOffset(17, 32),
+        Size = UDim2.new(1, -30, 0, 25),
+        BackgroundTransparency = 1,
+        Text = tostring(message or ""),
+        Font = Enum.Font.Gotham,
+        TextSize = 9,
+        TextColor3 = Theme.SoftText,
+        TextWrapped = true,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 1001
+    }, notification)
+
+    Tween(notification, 0.35, {
+        Position = UDim2.new(1, -22, 1, -22)
+    }, Enum.EasingStyle.Back)
+
+    task.delay(3, function()
+        if not notification or not notification.Parent then
+            return
+        end
+
+        Tween(notification, 0.3, {
+            Position = UDim2.new(1, -22, 1, 22),
+            BackgroundTransparency = 1
+        })
+
+        Tween(accentBar, 0.3, {
+            BackgroundTransparency = 1
+        })
+
+        Tween(titleLabel, 0.3, {
+            TextTransparency = 1
+        })
+
+        Tween(messageLabel, 0.3, {
+            TextTransparency = 1
+        })
+
+        local border = notification:FindFirstChildOfClass("UIStroke")
+
+        if border then
+            Tween(border, 0.3, {
+                Transparency = 1
+            })
+        end
+
+        task.wait(0.35)
+
+        if notification and notification.Parent then
+            notification:Destroy()
+        end
+    end)
+
+    return notification
 end
 
 
