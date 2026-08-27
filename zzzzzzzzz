@@ -149,8 +149,9 @@ Corner(GridClip, 14)
 
 local Grid = New("Frame", {
     Name = "InnerGeometricGrid",
-    Position = UDim2.fromScale(0, 0),
-    Size = UDim2.fromScale(1, 1),
+    AnchorPoint = Vector2.new(0.5, 0.5),
+    Position = UDim2.fromScale(0.5, 0.5),
+    Size = UDim2.new(1, -24, 1, -24),
     BackgroundTransparency = 1,
     BorderSizePixel = 0,
     ClipsDescendants = true,
@@ -159,18 +160,10 @@ local Grid = New("Frame", {
 
 local lineCount = 18
 
--- Length needed to fit a rotated line inside a square.
--- 0.92 gives a small safety margin.
-local lineLength = 0.86
-
-for i = 1, lineCount do
-    local x = (i - 0.5) / lineCount
-    local y = (i - 0.5) / lineCount
-
+for i = 1, 18 do
     New("Frame", {
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(x, 0, 0.5, 0),
-        Size = UDim2.new(0, 1, lineLength, 0),
+        Size = UDim2.new(0, 1, 1.5, 0),
+        Position = UDim2.new(i / 18, 0, -0.25, 0),
         Rotation = 16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.975,
@@ -179,9 +172,8 @@ for i = 1, lineCount do
     }, Grid)
 
     New("Frame", {
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        Position = UDim2.new(0.5, 0, y, 0),
-        Size = UDim2.new(lineLength, 0, 0, 1),
+        Size = UDim2.new(1.5, 0, 0, 1),
+        Position = UDim2.new(-0.25, 0, i / 18, 0),
         Rotation = -16,
         BackgroundColor3 = Theme.White,
         BackgroundTransparency = 0.98,
@@ -1188,30 +1180,17 @@ end
 end
 end)
 
+local drift = 0
+
 RunService.RenderStepped:Connect(function(deltaTime)
-    driftX = (driftX + deltaTime * 0.01) % spacing
-    driftY = (driftY + deltaTime * 0.008) % spacing
+    drift += deltaTime
 
-    for _, line in ipairs(Grid:GetChildren()) do
-        if line:IsA("Frame") then
-            if line.Name == "VerticalLine" then
-                local originalIndex = line.LayoutOrder
-            end
-        end
-    end
-
-    for i, line in ipairs(Grid:GetChildren()) do
-        if line:IsA("Frame") then
-            if line.Name == "VerticalLine" then
-                local x = ((i - 1) * spacing - driftX) % 1
-                line.Position = UDim2.new(x, 0, 0, 0)
-
-            elseif line.Name == "HorizontalLine" then
-                local y = ((i - 1) * spacing - driftY) % 1
-                line.Position = UDim2.new(0, 0, y, 0)
-            end
-        end
-    end
+    Grid.Position = UDim2.new(
+        0.5,
+        math.sin(drift * 0.25) * 3,
+        0.5,
+        math.cos(drift * 0.18) * 2
+    )
 end)
 
 Tween(Window, 0.6, {
