@@ -1318,6 +1318,9 @@ Tween(Window, 0.6, {
     Position = UDim2.fromScale(0.5, 0.5)
 }, Enum.EasingStyle.Back)
 
+--[[
+    MaddiSON usage example:
+
     local Window = MaddiSON:CreateWindow({
         Title = "MaddiSON",
         Subtitle = "MODULAR INTERFACE SYSTEM",
@@ -1345,3 +1348,4 @@ Tween(Window, 0.6, {
             print("Button pressed")
         end
     })
+]]
