@@ -135,8 +135,8 @@ Rotation = 35
 
 local Grid = New("Frame", {
     Name = "InnerGeometricGrid",
-    Position = UDim2.fromOffset(-90, -90),
-    Size = UDim2.new(1, 180, 1, 180),
+    Position = UDim2.fromScale(0, 0),
+    Size = UDim2.fromScale(1, 1),
     BackgroundTransparency = 1,
     ClipsDescendants = true,
     ZIndex = 12
@@ -523,8 +523,8 @@ local active = buttonName == name
 local otherIndicator = otherButton:FindFirstChild("Indicator")
 
 Tween(otherButton, 0.18, {
-BackgroundColor3 = active and Theme.White or Theme.Element,
-TextColor3 = active and Theme.Black or Theme.SoftText
+    BackgroundColor3 = active and Theme.White or Theme.Element,
+    TextColor3 = Theme.Text
 })
 
 if otherIndicator then
@@ -1167,11 +1167,10 @@ local drift = 0
 RunService.RenderStepped:Connect(function(deltaTime)
     drift += deltaTime
 
-    Grid.Position = UDim2.fromOffset(
-        -90 + math.sin(drift * 0.25) * 3,
-        -90 + math.cos(drift * 0.18) * 2
-    )
-end)
+Grid.Position = UDim2.fromOffset(
+    -90 + math.sin(drift * 0.25) * 3,
+    -90 + math.cos(drift * 0.18) * 2
+)
 
 Tween(Window, 0.6, {
 Position = UDim2.fromScale(0.5, 0.5)
