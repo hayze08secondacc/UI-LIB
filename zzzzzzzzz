@@ -161,7 +161,7 @@ local lineCount = 18
 
 -- Length needed to fit a rotated line inside a square.
 -- 0.92 gives a small safety margin.
-local lineLength = 0.92
+local lineLength = 0.86
 
 for i = 1, lineCount do
     local x = (i - 0.5) / lineCount
