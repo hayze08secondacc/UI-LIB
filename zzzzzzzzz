@@ -492,14 +492,14 @@ local function CreateCategory(name, icon, title)
     }, button)
 
     local indicator = New("Frame", {
-        Name = "Indicator",
-        Position = UDim2.fromOffset(0, 9),
-        Size = UDim2.fromOffset(3, 20),
-        BackgroundColor3 = Theme.Black,
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        ZIndex = 35
-    }, button)
+    Name = "Indicator",
+    Position = UDim2.fromOffset(0, 9),
+    Size = UDim2.fromOffset(3, 20),
+    BackgroundColor3 = Theme.Black,
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ZIndex = 35
+}, button)
 
     button.MouseEnter:Connect(function()
         if CurrentPageName ~= name then
@@ -526,35 +526,41 @@ local function CreateCategory(name, icon, title)
     end)
 
     button.MouseButton1Click:Connect(function()
-        for pageName, page in pairs(Pages) do
-            page.Visible = pageName == name
-        end
+    local clickedName = button.Name
 
-        for buttonName, otherButton in pairs(CategoryButtons) do
-            local active = buttonName == name
-            local otherLabel = otherButton:FindFirstChild("Label")
-            local otherIndicator = otherButton:FindFirstChild("Indicator")
+    for pageName, page in pairs(Pages) do
+        page.Visible = pageName == clickedName
+    end
 
-            Tween(otherButton, 0.18, {
-                BackgroundColor3 = active and Theme.White or Theme.Element
+    for buttonName, otherButton in pairs(CategoryButtons) do
+        local active = otherButton.Name == clickedName
+        local otherLabel = otherButton:FindFirstChild("Label")
+        local otherIndicator = otherButton:FindFirstChild("Indicator")
+
+        Tween(otherButton, 0.18, {
+            BackgroundColor3 = active and Theme.White or Theme.Element
+        })
+
+        if otherLabel then
+            Tween(otherLabel, 0.18, {
+                TextColor3 = active and Theme.Black or Theme.SoftText
             })
-
-            if otherLabel then
-                Tween(otherLabel, 0.18, {
-                    TextColor3 = active and Theme.Black or Theme.SoftText
-                })
-            end
-
-            if otherIndicator then
-                Tween(otherIndicator, 0.18, {
-                    BackgroundTransparency = active and 0 or 1
-                })
-            end
+        else
+            Tween(otherButton, 0.18, {
+                TextColor3 = active and Theme.Black or Theme.SoftText
+            })
         end
 
-        PageTitle.Text = name
-        CurrentPageName = name
-    end)
+        if otherIndicator then
+            Tween(otherIndicator, 0.18, {
+                BackgroundTransparency = active and 0 or 1
+            })
+        end
+    end
+
+    PageTitle.Text = button.Name
+    CurrentPageName = button.Name
+end)
 
     return button
 end
@@ -1322,15 +1328,11 @@ end
     end
 
 if not CurrentPageName then
-    page.Visible = true
+    CurrentPageName = button.Name
+    PageTitle.Text = button.Name
     button.BackgroundColor3 = Theme.White
     button.TextColor3 = Theme.Black
-    CurrentPageName = name
-
-    local indicator = button:FindFirstChild("Indicator")
-    if indicator then
-        indicator.BackgroundTransparency = 0
-    end
+    indicator.BackgroundTransparency = 0
 end
 
 -- Set the title immediately when the first tab is created.
