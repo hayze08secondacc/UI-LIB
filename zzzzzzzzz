@@ -1320,7 +1320,7 @@ end
         )
     end
 
-    if not CurrentPageName then
+if not CurrentPageName then
     page.Visible = true
     button.BackgroundColor3 = Theme.White
 
