@@ -1,3 +1,6 @@
+-- MaddiSON // compact monochrome UI
+-- LocalScript for a Roblox experience you control
+
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -129,14 +132,28 @@ local BackdropGradient = New("UIGradient", {
     Rotation = 35
 }, WindowBackdrop)
 
+-- Rounded mask that keeps the grid inside the window
+local GridMask = New("Frame", {
+    Name = "GridMask",
+    Position = UDim2.fromOffset(1, 1),
+    Size = UDim2.new(1, -2, 1, -2),
+    BackgroundTransparency = 1,
+    BorderSizePixel = 0,
+    ClipsDescendants = true,
+    ZIndex = 12
+}, WindowBackdrop)
+
+Corner(GridMask, 13)
+
 local Grid = New("Frame", {
     Name = "InnerGeometricGrid",
     Position = UDim2.fromOffset(-90, -90),
     Size = UDim2.new(1, 180, 1, 180),
     BackgroundTransparency = 1,
+    BorderSizePixel = 0,
     ClipsDescendants = true,
     ZIndex = 12
-}, WindowBackdrop)
+}, GridMask)
 
 for i = 1, 18 do
     New("Frame", {
@@ -144,7 +161,7 @@ for i = 1, 18 do
         Position = UDim2.new(i / 18, 0, -0.25, 0),
         Rotation = 16,
         BackgroundColor3 = Theme.White,
-        BackgroundTransparency = 0.975,
+        BackgroundTransparency = 0.94,
         BorderSizePixel = 0,
         ZIndex = 12
     }, Grid)
@@ -154,7 +171,7 @@ for i = 1, 18 do
         Position = UDim2.new(-0.25, 0, i / 18, 0),
         Rotation = -16,
         BackgroundColor3 = Theme.White,
-        BackgroundTransparency = 0.98,
+        BackgroundTransparency = 0.95,
         BorderSizePixel = 0,
         ZIndex = 12
     }, Grid)
