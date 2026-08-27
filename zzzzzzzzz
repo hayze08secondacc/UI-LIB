@@ -481,19 +481,6 @@ local function CreateCategory(name, icon)
         }, button)
     end
 
-    local label = New("TextLabel", {
-        Name = "Label",
-        Position = UDim2.fromOffset(iconId and 42 or 12, 0),
-        Size = UDim2.new(1, iconId and -52 or -24, 1, 0),
-        BackgroundTransparency = 1,
-        Text = name,
-        Font = Enum.Font.GothamSemibold,
-        TextSize = 11,
-        TextColor3 = Theme.SoftText,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        ZIndex = 35
-    }, button)
-
     local indicator = New("Frame", {
     Name = "Indicator",
     Position = UDim2.fromOffset(0, 9),
