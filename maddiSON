@@ -686,10 +686,8 @@ Size = UDim2.fromOffset(100, 28)
 end)
 
 button.MouseButton1Click:Connect(function()
-if callback then callback() end
+    SafeCallback(callback)
 end)
-
-SafeCallback(callback)
 
 return row
 end
@@ -735,10 +733,8 @@ Position = enabled and UDim2.new(1, -12, 0.5, 0) or UDim2.new(0, 12, 0.5, 0),
 BackgroundColor3 = enabled and Theme.Black or Theme.Muted
 })
 
-if callback then callback(enabled) end
+if SafeCallback(callback, enabled) end
 end)
-
-SafeCallback(callback, enabled)
 
 return row
 end
@@ -805,10 +801,9 @@ fill.Size = UDim2.fromScale(percent, 1)
 knob.Position = UDim2.new(percent, 0, 0.5, 0)
 valueLabel.Text = tostring(value)
 
-if callback then callback(value) end
+SafeCallback(callback, value) end
 end
 
-SafeCallback(callback, value)
 
 track.InputBegan:Connect(function(input)
 if input.UserInputType == Enum.UserInputType.MouseButton1
@@ -943,8 +938,7 @@ Tween(row, 0.2, {
 Size = UDim2.new(1, 0, 0, closedHeight)
 })
 
-if callback then
-callback(selected)
+if SafeCallback(callback, selected)
 end
 end)
 end
@@ -1006,11 +1000,11 @@ key = input.KeyCode
 listening = false
 button.Text = key.Name
 elseif input.KeyCode == key and not listening then
-if callback then callback() end
+SafeCallback(callback)
 end
 end)
 
-SafeCallback(callback)
+
 
 return row
 end
@@ -1039,10 +1033,9 @@ Stroke(box, Theme.Border, 1, 0.15)
 Padding(box, 0, 0, 9, 9)
 
 box.FocusLost:Connect(function()
-if callback then callback(box.Text) end
+SafeCallback(callback, box.Text) end
 end)
 
-SafeCallback(callback, box.Text)
 
 return row
 end
